@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import './style.css';
+import router from './router';
 import App from './components/App.vue';
 import "primeflex/primeflex.css";
 import 'primeicons/primeicons.css'
@@ -23,6 +24,8 @@ const app = createApp(App);
 
 
 app.use(PrimeVue, { ripple: true, style: true });
+app.use(router);
+
 
 app.directive('styleclass', StyleClass);
 app.directive('ripple', Ripple);
