@@ -19,11 +19,7 @@ onMounted(async () => {
 });
 
 </script>
-<template>
-     <!-- <InputText v-model="msg" />
-    <p>{{ msg }}</p>
-    <Button label="Check" icon="pi pi-users" /> -->
-    
+<template>    
 {{ bookings }}
 <DataTable :value="bookings" tableStyle="min-width: 50rem">
             <Column field="id" header="User Id"></Column>
