@@ -2,7 +2,7 @@
 <template>
     <div>
       <h2>About</h2>
-      <!-- <router-link to="/">Go to Home</router-link> -->
+      <router-link to="/">Go to Home</router-link>
     </div>
   </template>
   
