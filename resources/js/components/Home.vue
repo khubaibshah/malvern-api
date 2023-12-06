@@ -56,9 +56,22 @@ const formatDate = (date) => {
 </script>
 <template>
     <div>
+        <div class="surface-section px-4 py-5 md:px-6 lg:px-8 mt-5">
+    <div class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
+        <div class="mb-3 lg:mb-0">
+            <div class="text-3xl font-medium text-900 mb-3">Create a booking</div>
+            <div class="text-500 mr-0 md:mr-3">The garage is open between
+                9am and 5:30pm, Monday to Friday. Only 1 booking is allowed per slot.</div>
+        </div>
+        <span class="p-input-icon-left w-full md:w-auto">
+            <i class="pi pi-search"></i>
+            <InputText type="text" placeholder="Search" class="w-full md:w-auto"/>
+        </span>
+    </div>
+</div>
       <!-- <h2>Home</h2> -->
       <!-- <router-link to="/about">Go to About</router-link> -->
-      <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+      <div class="surface-section md:px-7 lg:px-8">
     <div class="grid">
         <div class="col-12 md:col-6">
             <div class="p-fluid pr-0 md:pr-6">
@@ -85,11 +98,11 @@ const formatDate = (date) => {
         <div class="col-12 md:col-6 bg-no-repeat bg-right-bottom" style="background-image: url('../../assets/images/contact-1.png')">
             <div class="text-900 text-2xl font-medium mb-3">Please pick a date</div>
             <Calendar v-model="date" inline showTime hourFormat="24" />
-                <div>
+                <!-- <div>
                     <span>Formatted Date: </span>
                     <span>{{ formatDate(date) }}</span>
-                    <!-- <span>{{ date.toISOString().replace('Z', '').split('T')[0] }}</span> -->
-                </div>
+                    
+                </div> -->
             
             
         </div>

@@ -283,7 +283,7 @@ const router = useRouter();
                     </li>
                 </ul>
             </div>
-            <div class="p-5 flex flex-column flex-auto">
+            <div class="p-4 flex flex-column flex-auto">
                 <div class="border-1 surface-border border-round surface-section flex-auto">
                     <!-- <Customers /> -->
                     <router-view></router-view>
