@@ -9,6 +9,8 @@ const vehicleMakeModel = ref('');
 
 const date = ref();
 const formattedDate = ref('');
+const successMessage = ref('');
+const errorMessage = ref('');
 
 const createBooking = async () => {
     try {
@@ -30,35 +32,52 @@ const createBooking = async () => {
         vehicleMakeModel.value = '';
         date.value = null;
 
+        // Set success message
+        successMessage.value = "Booking created successfully";
+        // Clear any previous error message
+        errorMessage.value = '';
+
     } catch (error) {
         console.error("Error creating booking:", error);
+
+        // Set error message
+        errorMessage.value = "Booking couldn't be created. Please try again.";
+        // Clear any previous success message
+        successMessage.value = '';
     }
 }
+
 const formatDate = (date) => {
     if (date) {
-        const options = {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            // timeZone: 'UTC', // You can specify the timezone if needed
-        };
-        return new Intl.DateTimeFormat('en-US', options)
-            .format(new Date(date))
-            .replace(/\//g, '-')
-            .replace(/,/, ''); // Remove the comma between date and time
+        const formattedDate = new Date(date);
+        const year = formattedDate.getFullYear();
+        const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(formattedDate.getDate()).padStart(2, '0');
+        const hours = String(formattedDate.getHours()).padStart(2, '0');
+        const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+        const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
     return '';
 };
-
 </script>
 <template>
     <div>
+        
         <div class="surface-section px-4 py-5 md:px-6 lg:px-8 mt-5">
+            <div v-if="successMessage" class="mb-5">
+      <Message severity="success">{{ successMessage }}</Message>
+    </div>
+
+    <!-- Error Message -->
+    <div v-if="errorMessage" class="mb-5">
+      <Message severity="error">{{ errorMessage }}</Message>
+    </div>
     <div class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
+        
         <div class="mb-3 lg:mb-0">
+            
             <div class="text-3xl font-medium text-900 mb-3">Create a booking</div>
             <div class="text-500 mr-0 md:mr-3">The garage is open between
                 9am and 5:30pm, Monday to Friday. Only 1 booking is allowed per slot.</div>
@@ -98,11 +117,11 @@ const formatDate = (date) => {
         <div class="col-12 md:col-6 bg-no-repeat bg-right-bottom" style="background-image: url('../../assets/images/contact-1.png')">
             <div class="text-900 text-2xl font-medium mb-3">Please pick a date</div>
             <Calendar v-model="date" inline showTime hourFormat="24" />
-                <!-- <div>
+                <div>
                     <span>Formatted Date: </span>
                     <span>{{ formatDate(date) }}</span>
                     
-                </div> -->
+                </div>
             
             
         </div>

@@ -16,6 +16,7 @@ import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
 import Badge from 'primevue/badge';
+import Message from 'primevue/message';
 
 
 import ColumnGroup from 'primevue/columngroup';   // optional
@@ -56,6 +57,7 @@ app.component('Column', Column);
 app.component('Textarea', Textarea);
 app.component('Calendar', Calendar);
 app.component('Badge', Badge);
+app.component('Message', Message);
 
 
 app.mount('#app');
