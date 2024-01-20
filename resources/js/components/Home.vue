@@ -111,17 +111,17 @@ const formatDate = (date) => {
             <Textarea v-model="vehicleMakeModel" id="message" :rows="6" :autoResize="true" class="py-3 px-2 text-lg"></Textarea>
         </div>
 
-        <Button label="Send Message" icon="pi pi-send" class="w-auto" @click="createBooking"></Button>
+        <Button label="Create Booking" icon="pi pi-send" class="w-auto" @click="createBooking"></Button>
             </div>
         </div>
         <div class="col-12 md:col-6 bg-no-repeat bg-right-bottom" style="background-image: url('../../assets/images/contact-1.png')">
             <div class="text-900 text-2xl font-medium mb-3">Please pick a date</div>
             <Calendar v-model="date" inline showTime hourFormat="24" />
-                <div>
+                <!-- <div>
                     <span>Formatted Date: </span>
                     <span>{{ formatDate(date) }}</span>
                     
-                </div>
+                </div> -->
             
             
         </div>
