@@ -53,7 +53,8 @@ const router = useRouter();
                             <a
                                 v-ripple
                                 class="flex flex-row lg:flex-column align-items-center cursor-pointer p-3 lg:justify-content-center hover:bg-gray-800 border-round text-gray-300 hover:text-white transition-duration-150 transition-colors p-ripple"
-                            >
+                                @click="router.push('/customers')"
+                                >
                                 <i
                                     class="pi pi-users mr-2 lg:mr-0 mb-0 lg:mb-2 text-base lg:text-lg"
                                 ></i>

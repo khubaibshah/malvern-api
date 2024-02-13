@@ -18,6 +18,8 @@ import Calendar from 'primevue/calendar';
 import Badge from 'primevue/badge';
 import Message from 'primevue/message';
 
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
 
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
@@ -41,6 +43,7 @@ app.config.globalProperties.$filters = {
     },
 
 }
+app.use(ToastService);
 app.use(PrimeVue, { ripple: true, style: true });
 app.use(router);
 
@@ -58,6 +61,7 @@ app.component('Textarea', Textarea);
 app.component('Calendar', Calendar);
 app.component('Badge', Badge);
 app.component('Message', Message);
+app.component('Toast', Toast);
 
 
 app.mount('#app');

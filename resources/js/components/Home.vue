@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
+import { useToast } from 'primevue/usetoast';
 
 const name = ref('');
 const email = ref('');
@@ -12,6 +13,11 @@ const formattedDate = ref('');
 const successMessage = ref('');
 const errorMessage = ref('');
 
+
+const toast = useToast();
+const show = () => {
+    toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content', life: 3000 });
+};
 const createBooking = async () => {
     try {
         const userBooking = {
@@ -31,19 +37,12 @@ const createBooking = async () => {
         phoneNumber.value = '';
         vehicleMakeModel.value = '';
         date.value = null;
-
         // Set success message
-        successMessage.value = "Booking created successfully";
-        // Clear any previous error message
-        errorMessage.value = '';
-
+        toast.add({ severity: 'success', summary: 'Attention', detail: 'Booking created successfully', life: 3000 });
     } catch (error) {
         console.error("Error creating booking:", error);
-
         // Set error message
-        errorMessage.value = "Booking couldn't be created. Please try again.";
-        // Clear any previous success message
-        successMessage.value = '';
+        toast.add({ severity: 'error', summary: 'Attention', detail: 'Booking couldnt be created. Please try again.', life: 3000 });
     }
 }
 
@@ -123,7 +122,7 @@ const formatDate = (date) => {
                     
                 </div> -->
             
-            
+                <Toast />
         </div>
     </div>
 </div>

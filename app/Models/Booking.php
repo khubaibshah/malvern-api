@@ -13,6 +13,7 @@ class Booking extends Model
         'email',
         'phone_number',
         'vehicle_make_model',
+        'notes',
         'booking_datetime',
     ];
 }

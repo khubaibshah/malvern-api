@@ -1,10 +1,12 @@
 <!-- resources/js/components/About.vue -->
 <template>
     <div>
-      <h2>About</h2>
+        <div class="surface-section md:px-7 lg:px-8">
+   <h2>About</h2>
       <router-link to="/">Go to Home</router-link>
       
     <!-- {{ bookings }} -->
+
     <DataTable :value="bookings" tableStyle="min-width: 50rem">
         <Column field="id" header="User Id"></Column>
         <Column field="name" header="Name"></Column>
@@ -15,6 +17,9 @@
         <Column field="created_at" header="Booking created"></Column>
         <Column field="updated_at" header="Booking updated"></Column>
     </DataTable>
+
+        </div>
+   
     </div>
   </template>
   
@@ -26,7 +31,7 @@
   
   const getAllUsers = async () => {
       try {
-          const response = await axios.get("/api/bookings"); // Adjust the API endpoint as needed
+          const response = await axios.get("/api/bookings");
           bookings.value = response.data;
       } catch (error) {
           console.error("Error fetching bookings:", error);

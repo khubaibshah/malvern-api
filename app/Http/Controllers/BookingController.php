@@ -11,7 +11,6 @@ class BookingController extends Controller
     {
         $bookings = Booking::all();
         return response()->json($bookings);
-        var_dump('testing', $bookings);
     }
 
     public function store(Request $request)
@@ -22,6 +21,7 @@ class BookingController extends Controller
             'phone_number' => 'required|string|max:255',
             'vehicle_make_model' => 'required|string|max:255',
             'booking_datetime' => 'required|date',
+            'notes' => 'required|string|max:255',
         ]);
 
         $booking = Booking::create($request->all());
