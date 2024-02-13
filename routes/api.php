@@ -15,17 +15,21 @@ use App\Http\Controllers\UserAuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('/register',[LoginController::class,'register']);
-Route::post('/login', [LoginController::class, 'login']);
-
-Route::middleware('auth:sanctum')->post('/logout', [LoginController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/bookings', [BookingController::class, 'index']);
-Route::post('/bookings', [BookingController::class, 'store']);
+//  Public routes
+Route::post('/register',[LoginController::class,'register']);
+Route::post('/login', [LoginController::class, 'login']);
 
 
-// Route::post('/login', [UserAuthController::class, 'login']);
+// Protected routes
+// Protected routes
+Route::group(['middleware' => ['auth:sanctum']], function(){
+    Route::post('/logout', [LoginController::class, 'logout']);
+    Route::get('/bookings', [BookingController::class, 'index']);
+    Route::post('/bookings', [BookingController::class, 'store']);
+});
+
