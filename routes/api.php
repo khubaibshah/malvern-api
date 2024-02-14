@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAuthController;
 /*
@@ -31,5 +32,6 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::post('/bookings', [BookingController::class, 'store']);
+    Route::get('/users', [UserController::class, 'index']);
 });
 
