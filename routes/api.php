@@ -27,7 +27,6 @@ Route::post('/login', [LoginController::class, 'login']);
 
 
 // Protected routes
-// Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::get('/bookings', [BookingController::class, 'index']);
