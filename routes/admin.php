@@ -7,3 +7,4 @@ use App\Http\Controllers\BookingController;
 
 
 Route::post('/customerbookings', [BookingController::class, 'store']);
+Route::get('/customerbookings', [BookingController::class, 'index']);
