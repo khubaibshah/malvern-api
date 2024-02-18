@@ -45,7 +45,7 @@ class Kernel extends HttpKernel
         ],
 
         'admin' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':admin',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             ],
