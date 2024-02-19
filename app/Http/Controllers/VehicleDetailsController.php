@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -34,7 +33,8 @@ class VehicleDetailsController extends Controller
             // Check if the request was successful
             if ($response->getStatusCode() === 200) {
                 // Return the response from the DVLA API
-                return $response->getBody()->getContents();
+                $decodedResponse = json_decode($response->getBody()->getContents(), true);
+                return response()->json($decodedResponse, $response->getStatusCode(), [], JSON_PRETTY_PRINT);
             } else {
                 // Return an error response if the request failed
                 return response()->json(['error' => 'Failed to retrieve vehicle details'], $response->getStatusCode());
@@ -45,4 +45,5 @@ class VehicleDetailsController extends Controller
         }
     }
 }
+
 
