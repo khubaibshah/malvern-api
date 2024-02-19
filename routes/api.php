@@ -6,6 +6,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\VehicleDetailsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //  Public routes
 Route::post('/register',[LoginController::class,'register']);
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
 // Route::post('/customerbookings', [BookingController::class, 'store']);
 
 // Protected routes
