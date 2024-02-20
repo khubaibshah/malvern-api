@@ -12,5 +12,6 @@ Route::get('/customerbookings', [BookingController::class, 'index']);
 Route::post('/get-vehicle-details', [VehicleDetailsController::class, 'VesVehicleDetails']);
 Route::get('/vehicle-details', [VehicleController::class, 'index']);
 Route::post('/vehicle-details', [VehicleController::class, 'store']);
-Route::get('/vehicle-details/{id}', [VehicleController::class, 'show']);
+Route::get('/vehicle-details/{registrationNumber}', [VehicleController::class, 'show']);
+
 

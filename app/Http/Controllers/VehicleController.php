@@ -16,14 +16,20 @@ class VehicleController extends Controller
         return response()->json($vehicles);
     }
 
-    public function show($id)
-    {
-        // Fetch a single vehicle by its ID from the database
-        $vehicle = Vehicle::findOrFail($id);
+    public function show($registrationNumber)
+{
+    // Fetch a single vehicle by its registration number from the database
+    $vehicle = Vehicle::where('registration_number', $registrationNumber)->first();
 
-        // Return a JSON response with the fetched vehicle
-        return response()->json($vehicle);
+    if (!$vehicle) {
+        // If the vehicle with the provided registration number is not found, return a 404 response
+        return response()->json(['error' => 'Vehicle not found'], 404);
     }
+
+    // Return a JSON response with the fetched vehicle
+    return response()->json($vehicle);
+}
+
     
     public function store(Request $request)
 {
