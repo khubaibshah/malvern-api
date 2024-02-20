@@ -16,7 +16,7 @@ class VehicleDetailsController extends Controller
         
         // Create a Guzzle Client instance with SSL certificate verification
         $client = new Client([
-            'verify' => 'C:\Users\khuba\projects\malvern-api\storage\certificates\cacert.pem', // Specify the path to your CA certificate bundle
+            'verify' => env('SSL_URL'), // Specify the path to your CA certificate bundle
         ]);
 
         // Make a request to the DVLA API using Guzzle Client
