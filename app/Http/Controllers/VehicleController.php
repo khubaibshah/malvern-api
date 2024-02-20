@@ -33,13 +33,13 @@ class VehicleController extends Controller
         'make' => 'required|string|max:255',
         'colour' => 'required|string|max:255',
         'tax_status' => 'required|string|max:255',
-        'tax_due_date' => 'required|date',
+        'tax_due_date' => 'string|max:255',
         'mot_status' => 'required|string|max:255',
-        'mot_expiry_date' => 'required|date',
-        'year_of_manufacture' => 'required|string|max:255',
+        'mot_expiry_date' => 'required|string|max:255',
+        'year_of_manufacture' => 'required|integer', // Update validation rule
         'fuel_type' => 'required|string|max:255',
         'type_approval' => 'required|string|max:255',
-        'date_of_last_v5c_issued' => 'required|date',
+        'date_of_last_v5_c_issued' => 'string|max:255',
         'wheelplan' => 'required|string|max:255',
     ]);
 
