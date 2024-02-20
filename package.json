@@ -7,7 +7,6 @@
         "serve": "vite preview"
     },
     "devDependencies": {
-        "axios": "^1.6.2",
         "laravel-vite-plugin": "^0.8.1",
         "rollup-plugin-delete": "^2.0.0",
         "vite": "^4.0.0"
