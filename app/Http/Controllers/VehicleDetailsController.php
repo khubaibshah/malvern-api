@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class VehicleDetailsController extends Controller
 {
-    public function getVehicleDetails(Request $request)
+    public function vesVehicleDetails(Request $request)
     {
         // Validate the request
         $request->validate([
