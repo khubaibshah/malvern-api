@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookingController;
+use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAuthController;
@@ -31,8 +31,8 @@ Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDet
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/logout', [LoginController::class, 'logout']);
-    Route::get('/bookings', [BookingController::class, 'index']);
-    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::get('/admin-bookings', [AdminBookingController::class, 'index']);
+    Route::post('/admin-bookings', [AdminBookingController::class, 'store']);
     Route::get('/users', [UserController::class, 'index']);
 });
 

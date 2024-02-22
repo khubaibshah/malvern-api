@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Database\Factories\BookingFactory;
 
-class Booking extends Model
+class AdminBooking extends Model
 {
     use HasFactory;
 
 
-    protected $table = 'bookings';
+    protected $table = 'admin_bookings';
 
     protected $fillable = [
         'user_id',
@@ -24,7 +24,7 @@ class Booking extends Model
     ];
 
     //seeding for test scenarios
-    protected $factory = BookingFactory::class;
+    protected $factory = AdminBookingFactory::class;
 
     public function user()
     {

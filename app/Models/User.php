@@ -50,6 +50,6 @@ class User extends Authenticatable
      */
     public function bookings()
     {
-        return $this->hasMany(Booking::class, 'user_booking_id');
+        return $this->hasMany(AdminBooking::class, 'user_booking_id');
     }
 }

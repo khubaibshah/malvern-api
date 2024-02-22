@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
+use App\Models\AdminBooking;
 use Illuminate\Http\Request;
 
-class BookingController extends Controller
+class AdminBookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::all();
+        $bookings = AdminBooking::all();
         return response()->json($bookings);
     }
 
@@ -24,7 +24,7 @@ class BookingController extends Controller
             'notes' => 'required|string|max:255',
         ]);
 
-        $booking = Booking::create($request->all());
+        $booking = AdminBooking::create($request->all());
 
         return response()->json($booking, 201);
     }
