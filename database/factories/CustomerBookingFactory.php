@@ -2,38 +2,29 @@
 
 namespace Database\Factories;
 
-use App\Models\Booking;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BookingFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CustomerBooking>
+ */
+class CustomerBookingFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Booking::class;
-
     /**
      * Define the model's default state.
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
-        // Get a random user ID from the database
-        $user = User::inRandomOrder()->first();
-
         return [
-            'name' => $user->name, // Use the email from the user
-            'email' => $user->email, // Use the email from the user
-            'phone_number' => $this->faker->phoneNumber,
-            'vehicle_make_model' => $this->faker->sentence(3),
-            'booking_datetime' => $this->faker->dateTimeBetween('now', '+1 year'),
-            'notes' => $this->faker->sentence,
-            'user_booking_id' => $user->id, // Associate with the user
+            'Booking_reference' => $this->faker->randomNumber(2),
+            'vehicle_make' => $this->faker->randomElement(['Toyota', 'Honda', 'Ford']),
+            'vehicle_model' => $this->faker->word,
+            'job_repair_id' => $this->faker->randomNumber(1),
+            'bookings_datetime' => $this->faker->dateTime(),
+            'customer_notes' => $this->faker->sentence,
+            'deposit_paid' => $this->faker->boolean,
+            'repair_price' => $this->faker->randomFloat(2, 100, 1000),
         ];
     }
 }
-
