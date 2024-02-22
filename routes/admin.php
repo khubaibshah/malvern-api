@@ -7,6 +7,7 @@ use App\Http\Controllers\VehicleDetailsController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\CustomerBookingController;
 use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\JobSubCategoryController;
 
 // Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
 Route::post('/get-vehicle-details', [VehicleDetailsController::class, 'VesVehicleDetails']);
@@ -14,6 +15,7 @@ Route::get('/vehicle-details', [VehicleController::class, 'index']);
 Route::post('/vehicle-details', [VehicleController::class, 'store']);
 Route::get('/vehicle-details/{registrationNumber}', [VehicleController::class, 'show']);
 Route::get('/customer-booking', [CustomerBookingController::class, 'index']);
-Route::get('/customer-job-categories', [JobCategoryController::class, 'index']);
+Route::get('/customer-job-category', [JobCategoryController::class, 'index']);
+Route::get('/customer-job-sub-categories', [JobSubCategoryController::class, 'index']);
 
 
