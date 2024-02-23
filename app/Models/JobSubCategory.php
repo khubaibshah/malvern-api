@@ -18,4 +18,8 @@ class JobSubCategory extends Model
     ];
 
     // Define any relationships if needed
+    public function category()
+{
+    return $this->belongsTo(JobCategory::class, 'job_category_id');
+}
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class JobCategoryController extends Controller
 {
@@ -13,6 +14,13 @@ class JobCategoryController extends Controller
         $jobCategories = JobCategory::all();
 
         return response()->json($jobCategories);
+    }
+
+    public function getJobCategoriesWithSubcategories()
+    {
+        $categories = JobCategory::with('subcategories')->get();
+
+        return response()->json($categories);
     }
 
     // public function store(Request $request)

@@ -13,7 +13,6 @@ class JobSubCategoryController extends Controller
 
         return response()->json($jobSubCategories);
     }
-
      // public function store(Request $request)
     // {
     //     $request->validate([

@@ -19,4 +19,8 @@ class JobCategory extends Model
     ];
 
     // Define any relationships if needed
+    public function subcategories()
+{
+    return $this->hasMany(JobSubCategory::class, 'job_subcategory_id');
+}
 }
