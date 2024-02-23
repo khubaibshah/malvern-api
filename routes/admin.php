@@ -15,7 +15,7 @@ Route::post('/get-vehicle-details', [VehicleDetailsController::class, 'VesVehicl
 Route::get('/vehicle-details', [VehicleController::class, 'index']);
 Route::post('/vehicle-details', [VehicleController::class, 'store']);
 Route::get('/vehicle-details/{registrationNumber}', [VehicleController::class, 'show']);
-Route::get('/dvsa-vehicle-details', [DVSAVehicleController::class, 'getMOTTests']);
+Route::get('/dvsa-vehicle-details/{registrationNumber}', [DVSAVehicleController::class, 'getMOTTests']);
 Route::get('/customer-booking', [CustomerBookingController::class, 'index']);
 Route::get('/customer-job-category', [JobCategoryController::class, 'index']);
 Route::get('/customer-job-sub-categories', [JobSubCategoryController::class, 'index']);
