@@ -17,6 +17,6 @@ Route::get('/vehicle-details/{registrationNumber}', [VehicleController::class, '
 Route::get('/customer-booking', [CustomerBookingController::class, 'index']);
 Route::get('/customer-job-category', [JobCategoryController::class, 'index']);
 Route::get('/customer-job-sub-categories', [JobSubCategoryController::class, 'index']);
-Route::get('/customer-repairs', [JobCategoryController::class, 'getJobCategoriesWithSubcategories']);
+Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCategoriesWithSubcategories']);
 
 
