@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5173', 'http://localhost:5174', 'https://main.d23ylsy8h1d6lf.amplifyapp.com'],
+    'allowed_origins' => ['http://localhost:5173', 'http://localhost:5174', 'https://main.d23ylsy8h1d6lf.amplifyapp.com', 'https://malvernadmin.netlify.app'],
 
     'allowed_origins_patterns' => [],
 
