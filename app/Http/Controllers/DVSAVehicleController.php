@@ -12,7 +12,7 @@ class DVSAVehicleController extends Controller
     // No need to validate $registrationNumber here, as it's part of the URL
     // Create a Guzzle Client instance with SSL certificate verification
     $client = new Client([
-        'verify' => env('SSL_URL'), // Specify the path to your CA certificate bundle
+        'verify' => env('SSL_URL'), // path to the CA certificate bundle
     ]);
     
     // Make the request to the DVSA API
