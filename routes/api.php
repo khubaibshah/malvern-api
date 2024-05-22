@@ -3,10 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\CustomerBookingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\VehicleDetailsController;
+use App\Http\Controllers\ScsCarImageController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,7 +28,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register',[LoginController::class,'register']);
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
-Route::post('/customerbookings', [BookingController::class, 'store']);
+Route::post('/customerbookings', [CustomerBookingController::class, 'store']);
+
+//will have to move this one to protected routes because it is admin panel needs api key to send request
+Route::post('/scs-car-images', [ScsCarImageController::class, 'store']);
+
+
+
+Route::get('/scs-car-images/{id}', [ScsCarImageController::class, 'show']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function(){
