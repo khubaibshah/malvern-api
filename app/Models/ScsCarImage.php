@@ -1,5 +1,4 @@
 <?php
-
 // app/Models/ScsCarImage.php
 namespace App\Models;
 
@@ -10,11 +9,16 @@ class ScsCarImage extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['car_image'];
+    protected $fillable = ['car_image', 'scs_car_id'];
 
     // Accessor to get image as a base64 encoded string
     public function getCarImageAttribute($value)
     {
         return base64_encode($value);
+    }
+
+    public function car()
+    {
+        return $this->belongsTo(ScsCar::class);
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\VehicleDetailsController;
 use App\Http\Controllers\ScsCarImageController;
+use App\Http\Controllers\ScsCarController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,7 +34,7 @@ Route::post('/customerbookings', [CustomerBookingController::class, 'store']);
 //will have to move this one to protected routes because it is admin panel needs api key to send request
 Route::post('/scs-car-images', [ScsCarImageController::class, 'store']);
 
-
+Route::post('/upload-scs-car', [ScsCarController::class, 'store']);
 
 Route::get('/scs-car-images/{id}', [ScsCarImageController::class, 'show']);
 
