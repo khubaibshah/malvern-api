@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ScsCarImage;
 use App\Models\ScsCar;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,5 +54,14 @@ class ScsCarImageController extends Controller
 
         return response()->json(['image' => $scsCarImage->car_image]);
     }
+
+    public function getAllCars() : JsonResponse {
+        // Retrieve all records from the ScsCarImage model
+        $scsCars = ScsCarImage::all(); // Added missing semicolon
+    
+        // Return the retrieved records as a JSON response
+        return response()->json($scsCars); 
+    }
+    
 }
 
