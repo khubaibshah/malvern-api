@@ -11,7 +11,8 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobSubCategoryController;
 
 // Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
-Route::post('/get-vehicle-details', [VehicleDetailsController::class, 'VesVehicleDetails']);
+Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::class, 'VesVehicleDetails']);
+Route::post('/ves-auth', [VehicleDetailsController::class, 'authenticateVes']);
 Route::get('/vehicle-details', [VehicleController::class, 'index']);
 Route::post('/vehicle-details', [VehicleController::class, 'store']);
 Route::get('/vehicle-details/{registrationNumber}', [VehicleController::class, 'show']);

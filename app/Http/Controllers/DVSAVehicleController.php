@@ -7,30 +7,53 @@ use GuzzleHttp\Client;
 
 class DVSAVehicleController extends Controller
 {
-    public function getMOTTests(Request $request, $registrationNumber)
-{
-    // No need to validate $registrationNumber here, as it's part of the URL
-    // Create a Guzzle Client instance with SSL certificate verification
-    $client = new Client([
-        'verify' => env('SSL_URL'), // path to the CA certificate bundle
-    ]);
-    
-    // Make the request to the DVSA API
-    $response = $client->get("https://beta.check-mot.service.gov.uk/trade/vehicles/mot-tests?registration=" . $registrationNumber, [
-        'headers' => [
-            'x-api-key' => env('DVSA_API_KEY'),
-            'Accept' => 'application/json+v6'
-        ],
-    ]);
-    
-    // Check if the request was successful
-    if ($response->getStatusCode() == 200) {
-        $data = $response->getBody()->getContents();
-        return json_decode($data, true); // Return JSON response from the API
-    } else {
-        // Handle errors
-        return response()->json(['error' => 'Failed to fetch MOT tests.'], $response->getStatusCode());
-    }
-}
+    public function authenticateVes()
+    {
 
+        $client = new Client([
+            'verify' => env('SSL_URL'), // path to CA certificate bundle
+        ]);
+
+        $response = $client->post('https://login.microsoftonline.com/a455b827-244f-4c97-b5b4-ce5d13b4d00c/oauth2/v2.0/token', [
+        'form_params' => [
+            'grant_type' => 'client_credentials',
+            'client_id' => env('API_CLIENT_ID'),
+            'client_secret' => env('API_CLIENT_SECRET'),
+            'scope' => env('SCOPE')
+        ]
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+        // dd($data);
+        return $data['access_token'];
+    }
+    public function getMOTTests(Request $request, $registrationNumber)
+    {
+        // No need to validate $registrationNumber here, as it's part of the URL
+        // Create a Guzzle Client instance with SSL certificate verification
+        $accessToken = $this->authenticateVes(); // Get the access token from Microsoft
+
+        $client = new Client([
+            'verify' => env('SSL_URL'), // You can set this to false for local testing
+        ]);
+
+        try {
+            $response = $client->get("https://history.mot.api.gov.uk/v1/trade/vehicles/registration/$registrationNumber", [
+                'headers' => [
+                    'Authorization' => "Bearer $accessToken",
+                    'X-API-Key' => env('DVSA_API_KEY'),
+                    'Accept' => 'application/json',
+                ]
+            ]);
+
+            if ($response->getStatusCode() === 200) {
+                $decodedResponse = json_decode($response->getBody()->getContents(), true);
+                return response()->json($decodedResponse, 200, [], JSON_PRETTY_PRINT);
+            } else {
+                return response()->json(['error' => 'Failed to retrieve vehicle details'], $response->getStatusCode());
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
