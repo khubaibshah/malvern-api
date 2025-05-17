@@ -4,30 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
 
 class DVSAVehicleController extends Controller
 {
+
+
     public function authenticateVes()
     {
+        // Check if token is cached
+        if (Cache::has('ves_access_token')) {
+            return Cache::get('ves_access_token');
+        }
 
         $client = new Client([
-            'verify' => env('SSL_URL'), // path to CA certificate bundle
+            'verify' => env('SSL_URL'),
         ]);
 
         $response = $client->post('https://login.microsoftonline.com/a455b827-244f-4c97-b5b4-ce5d13b4d00c/oauth2/v2.0/token', [
-        'form_params' => [
-            'grant_type' => 'client_credentials',
-            'client_id' => env('API_CLIENT_ID'),
-            'client_secret' => env('API_CLIENT_SECRET'),
-            'scope' => env('SCOPE')
-        ]
+            'form_params' => [
+                'grant_type' => 'client_credentials',
+                'client_id' => env('API_CLIENT_ID'),
+                'client_secret' => env('API_CLIENT_SECRET'),
+                'scope' => env('SCOPE')
+            ]
         ]);
 
         $data = json_decode($response->getBody(), true);
-        // dd($data);
-        return $data['access_token'];
+        $accessToken = $data['access_token'];
+
+        // Cache token for 59 minutes (just under the 60-minute expiry to be safe)
+        Cache::put('ves_access_token', $accessToken, now()->addMinutes(59));
+
+        return $accessToken;
     }
-    public function getMOTTests(Request $request, $registrationNumber)
+
+    public function getMOTTests($registrationNumber)
     {
         // No need to validate $registrationNumber here, as it's part of the URL
         // Create a Guzzle Client instance with SSL certificate verification
