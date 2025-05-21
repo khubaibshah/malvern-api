@@ -55,7 +55,7 @@ class ScsCarImageController extends Controller
         return response()->json(['image' => $scsCarImage->car_image]);
     }
 
-    public function getAllCars() : JsonResponse {
+    public function getAllCarsImages() : JsonResponse {
         // Retrieve all records from the ScsCarImage model
         $scsCars = ScsCarImage::all(); // Added missing semicolon
     
@@ -63,5 +63,10 @@ class ScsCarImageController extends Controller
         return response()->json($scsCars); 
     }
     
+    public function getAllCars(): JsonResponse
+    {
+        $allCars = ScsCar::with('images')->get();
+        return response()->json($allCars);
+    }
 }
 

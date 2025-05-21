@@ -16,7 +16,7 @@ class ScsCarController extends Controller
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
             'year' => 'required|integer|min:1900|max:' . date('Y'),
-            'car_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate images, nullable allows no images
+            'car_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120', // Validate images, nullable allows no images
             'vrm' => 'nullable|string|max:255',
             'reg_date' => 'nullable|date',
             'man_year' => 'nullable|string|max:255',
