@@ -39,6 +39,7 @@ Route::post('/upload-scs-car', [ScsCarController::class, 'store']);
 Route::get('/scs-car-images/{id}', [ScsCarImageController::class, 'show']);
 Route::get('/scs-car-images', [ScsCarImageController::class, 'getAllCarsImages']);
 Route::get('/scs-cars', [ScsCarImageController::class, 'getAllCars']);
+Route::get('/get-car-by-id/{vehicleId}', [ScsCarImageController::class, 'getCarById']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function(){

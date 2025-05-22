@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ScsCarController extends Controller
 {
+
     public function store(Request $request)
     {
         // Validate car data

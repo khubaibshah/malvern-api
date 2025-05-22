@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class ScsCarImageController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created vehicle in storage.
      */
     public function store(Request $request, $carId)
     {
@@ -42,7 +42,7 @@ class ScsCarImageController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the vehicle record with no images
      */
     public function show($id)
     {
@@ -55,14 +55,31 @@ class ScsCarImageController extends Controller
         return response()->json(['image' => $scsCarImage->car_image]);
     }
 
+    // Retrieve all images for cars 
     public function getAllCarsImages() : JsonResponse {
-        // Retrieve all records from the ScsCarImage model
-        $scsCars = ScsCarImage::all(); // Added missing semicolon
-    
-        // Return the retrieved records as a JSON response
+        $scsCars = ScsCarImage::all();
         return response()->json($scsCars); 
     }
     
+    //get full car details by id
+    public function getCarById($vehicleId): JsonResponse
+    {
+        $vehicle = ScsCar::with('images')->find($vehicleId);
+        if (!$vehicle) {
+            return response()->json(['message' => 'Car not found'], 404);
+        }
+
+        return response()->json($vehicle);
+    }
+
+    //edit vehicle listing from admin
+    public function updateVehicleListing(): JsonResponse
+    {
+
+
+    }
+
+    //get all cars with images
     public function getAllCars(): JsonResponse
     {
         $allCars = ScsCar::with('images')->get();
