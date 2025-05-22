@@ -20,27 +20,14 @@ class ScsCarController extends Controller
             'car_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120', // Validate images, nullable allows no images
             'vrm' => 'nullable|string|max:255',
             'reg_date' => 'nullable|date',
-            'man_year' => 'nullable|string|max:255',
-            'reg_letter' => 'nullable|string|max:255',
+            'reg' => 'nullable|string|max:255',
             'variant' => 'nullable|string|max:255',
             'price' => 'required|numeric',
-            'plus_vat' => 'nullable|boolean',
-            'vat_qualifying' => 'nullable|boolean',
-            'was_price' => 'nullable|numeric',
-            'trade_price' => 'nullable|string|max:255',
-            'trade_text' => 'nullable|string|max:255',
-            'price_above_40k' => 'nullable|boolean',
             'mileage' => 'required|integer',
-            'engine_cc' => 'nullable|integer',
             'fuel_type' => 'required|string|max:255',
-            'body_style' => 'required|string|max:255',
             'colour' => 'required|string|max:255',
-            'doors' => 'required|integer',
             'veh_type' => 'required|string|max:255',
             'veh_status' => 'nullable|string|max:255',
-            'stock_id' => 'nullable|string|max:255',
-            'ebay_gt_title' => 'nullable|string|max:255',
-            'subtitle' => 'required|string|max:255',
             'description' => 'required|string'
         ]);
 
