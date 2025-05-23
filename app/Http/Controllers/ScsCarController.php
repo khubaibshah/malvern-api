@@ -43,9 +43,9 @@ class ScsCarController extends Controller
     }
 
     //get vehicle data and images from s3
-    public function get(Request $request, $vehicleId): JsonResponse
+    public function get($vehicleId): JsonResponse
     {
-        $result = $this->vehicleService->getVehicleWithImages($request, $vehicleId);
+        $result = $this->vehicleService->getVehicleWithImages($vehicleId);
 
         if (isset($result['error'])) {
             return response()->json(['message' => $result['error']], $result['status']);

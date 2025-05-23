@@ -74,8 +74,8 @@ class VehicleService
         return ['car' => $car, 'status' => 201];
     }
 
-    //updateVehicleWithImages
-    public function getVehicleWithImages(Request $request, int $vehicleId): array
+    
+    public function getVehicleWithImages(int $vehicleId): array
     {
         $vehicle = ScsCar::find($vehicleId);
 
@@ -83,7 +83,7 @@ class VehicleService
              return ['error' => 'Vehicle not found', 'status' => 404];
         }
         $folder = "car_images/{$vehicle->registration}";
-        $imagePaths = $this->awsS3->listFiles($folder); // You’ll add this to AwsS3Service
+        $imagePaths = $this->awsS3->listFiles($folder);
 
         // Generate public URLs for each image
         $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $imagePaths);
@@ -94,6 +94,7 @@ class VehicleService
         return ['message' => 'Vehicle updated successfully', 'car' => $vehicle, 'status' => 200];
     }
 
+    //updateVehicleWithImages
     public function updateVehicleWithImages()
     {
 
