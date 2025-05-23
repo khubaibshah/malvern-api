@@ -20,7 +20,7 @@ class ScsCarController extends Controller
             'car_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120', // Validate images, nullable allows no images
             'vrm' => 'nullable|string|max:255',
             'reg_date' => 'nullable|date',
-            'reg' => 'nullable|string|max:255',
+            'registration' => 'nullable|string|max:255',
             'variant' => 'nullable|string|max:255',
             'price' => 'required|numeric',
             'mileage' => 'required|integer',
@@ -28,7 +28,7 @@ class ScsCarController extends Controller
             'colour' => 'required|string|max:255',
             'veh_type' => 'required|string|max:255',
             'veh_status' => 'nullable|string|max:255',
-            'description' => 'required|string'
+            'description' => 'required|string',
         ]);
 
         //error handling
@@ -43,7 +43,7 @@ class ScsCarController extends Controller
             'vrm',
             'reg_date',
             'man_year',
-            'reg_letter',
+            'registration',
             'variant',
             'price',
             'plus_vat',
