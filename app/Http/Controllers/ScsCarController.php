@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ScsCar;
 use App\Models\ScsCarImage;
+use App\Services\AwsS3Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 
 class ScsCarController extends Controller
 {
+    public function __construct(protected AwsS3Service $awsS3) {}
+
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -61,11 +64,8 @@ class ScsCarController extends Controller
         ]));
 
         if ($request->hasFile('car_images')) {
-            $images = $request->file('car_images');
-
-            foreach ($images as $image) {
-                $path = $image->store("car_images/{$car->registration}", 's3');
-                $url = Storage::disk('s3')->url($path);
+            foreach ($request->file('car_images') as $image) {
+                $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
 
                 ScsCarImage::create([
                     'scs_car_id' => $car->id,
