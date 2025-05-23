@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ScsCar;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -23,5 +24,37 @@ class ScsCarController extends Controller
             'message' => 'Car and images successfully created and uploaded',
             'car' => $result['car']
         ], $result['status']);
+    }
+
+    //update vehicle data and images
+    public function put(Request $request, int $id): JsonResponse
+    {
+        $result = $this->vehicleService->updateVehicleWithImages($request, $id);
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => $result['error']], $result['status']);
+        }
+
+        if (isset($result['errors'])) {
+            return response()->json(['errors' => $result['errors']], $result['status']);
+        }
+
+        return response()->json(['message' => $result['message'], 'car' => $result['car']], $result['status']);
+    }
+
+    //get vehicle data and images from s3
+    public function get(Request $request, $vehicleId): JsonResponse
+    {
+        $result = $this->vehicleService->getVehicleWithImages($request, $vehicleId);
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => $result['error']], $result['status']);
+        }
+
+        if (isset($result['errors'])) {
+            return response()->json(['errors' => $result['errors']], $result['status']);
+        }
+
+        return response()->json(['message' => $result['message'], 'car' => $result['car']], $result['status']);
     }
 }

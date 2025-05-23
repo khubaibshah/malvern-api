@@ -36,10 +36,28 @@ class VehicleService
         }
 
         $car = ScsCar::create($request->only([
-            'registration', 'make', 'model', 'year', 'vrm', 'reg_date', 'man_year',
-            'variant', 'price', 'was_price', 'mileage', 'engine_cc', 'fuel_type',
-            'body_style', 'colour', 'doors', 'veh_type', 'veh_status',
-            'stock_id', 'ebay_gt_title', 'subtitle', 'description'
+            'registration',
+            'make',
+            'model',
+            'year',
+            'vrm',
+            'reg_date',
+            'man_year',
+            'variant',
+            'price',
+            'was_price',
+            'mileage',
+            'engine_cc',
+            'fuel_type',
+            'body_style',
+            'colour',
+            'doors',
+            'veh_type',
+            'veh_status',
+            'stock_id',
+            'ebay_gt_title',
+            'subtitle',
+            'description'
         ]));
 
         if ($request->hasFile('car_images')) {
@@ -54,5 +72,30 @@ class VehicleService
         }
 
         return ['car' => $car, 'status' => 201];
+    }
+
+    //updateVehicleWithImages
+    public function getVehicleWithImages(Request $request, int $vehicleId): array
+    {
+        $vehicle = ScsCar::find($vehicleId);
+
+        if (!$vehicle) {
+             return ['error' => 'Vehicle not found', 'status' => 404];
+        }
+        $folder = "car_images/{$vehicle->registration}";
+        $imagePaths = $this->awsS3->listFiles($folder); // You’ll add this to AwsS3Service
+
+        // Generate public URLs for each image
+        $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $imagePaths);
+
+        // Add image URLs to the response
+        $vehicle->images = $imageUrls;
+
+        return ['message' => 'Vehicle updated successfully', 'car' => $vehicle, 'status' => 200];
+    }
+
+    public function updateVehicleWithImages()
+    {
+
     }
 }

@@ -34,12 +34,19 @@ Route::post('/customerbookings', [CustomerBookingController::class, 'store']);
 //will have to move this one to protected routes because it is admin panel needs api key to send request
 Route::post('/scs-car-images', [ScsCarImageController::class, 'store']);
 
+
+##these two work for uploading to s3 and updating - 23/05/2025
 Route::post('/upload-scs-car', [ScsCarController::class, 'store']);
+Route::put('/update-car/{id}', [ScsCarController::class, 'put']);
+
+
 
 Route::get('/scs-car-images/{id}', [ScsCarImageController::class, 'show']);
 Route::get('/scs-car-images', [ScsCarImageController::class, 'getAllCarsImages']);
 Route::get('/scs-cars', [ScsCarImageController::class, 'getAllCars']);
-Route::get('/get-car-by-id/{vehicleId}', [ScsCarImageController::class, 'getCarById']);
+Route::get('/get-car-by-id/{vehicleId}', [ScsCarController::class, 'get']);
+
+
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function(){
