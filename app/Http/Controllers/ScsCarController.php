@@ -64,13 +64,13 @@ class ScsCarController extends Controller
             $images = $request->file('car_images');
 
             foreach ($images as $image) {
-                $path = $image->store("car_images/{$car->id}", 's3');
+                $path = $image->store("car_images/{$car->registration}", 's3');
                 $url = Storage::disk('s3')->url($path);
 
-                // ScsCarImage::create([
-                //     'scs_car_id' => $car->id,
-                //     'car_image' => $url
-                // ]);
+                ScsCarImage::create([
+                    'scs_car_id' => $car->id,
+                    'car_image' => $url
+                ]);
             }
         }
 
