@@ -1,13 +1,9 @@
 {
     "private": true,
     "type": "module",
-    "scripts": {
-
-    },
-    "devDependencies": {
-      
-    },
+    "scripts": {},
     "dependencies": {
-    
+        "aws": "^0.0.3-2",
+        "configure": "^0.0.1"
     }
 }
