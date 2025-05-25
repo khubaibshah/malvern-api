@@ -15,6 +15,8 @@ class VehicleService
     public function createVehicleWithImages(Request $request): array
     {
         try {
+            Log::info('createVehicleWithImages: starting validation');
+
             $validator = Validator::make($request->all(), [
                 'make' => 'required|string|max:255',
                 'model' => 'required|string|max:255',
@@ -34,13 +36,14 @@ class VehicleService
                 'car_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120',
             ]);
 
+            Log::info('createVehicleWithImages: finished validation');
+
             if ($validator->fails()) {
-                Log::warning('Validation failed in createVehicleWithImages', [
-                    'errors' => $validator->errors()->toArray()
-                ]);
+                Log::warning('Validation failed', ['errors' => $validator->errors()->toArray()]);
                 return ['errors' => $validator->errors(), 'status' => 400];
             }
 
+            Log::info('createVehicleWithImages: creating car');
             $car = ScsCar::create($request->only([
                 'registration',
                 'make',
@@ -66,10 +69,15 @@ class VehicleService
                 'description'
             ]));
 
+            Log::info('createVehicleWithImages: uploading images');
             if ($request->has('car_images')) {
                 foreach ($request->file('car_images') as $image) {
+                    Log::info('createVehicleWithImages: processing image');
                     if ($image->isValid()) {
+                        Log::info('createVehicleWithImages: image is valid, uploading to S3');
                         $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
+                        Log::info('createVehicleWithImages: S3 upload done', ['url' => $url]);
+
                         ScsCarImage::create([
                             'scs_car_id' => $car->id,
                             'car_image' => $url,
@@ -78,6 +86,7 @@ class VehicleService
                 }
             }
 
+            Log::info('createVehicleWithImages: complete');
             return ['car' => $car, 'status' => 201];
         } catch (\Exception $e) {
             Log::error('createVehicleWithImages failed', [
