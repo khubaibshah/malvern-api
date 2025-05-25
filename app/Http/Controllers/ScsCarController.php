@@ -16,6 +16,7 @@ class ScsCarController extends Controller
     public function store(Request $request): JsonResponse
     {
          Log::info('ScsCarController@store hit');
+         Log::debug('VehicleService::__construct hit test');
         $result = $this->vehicleService->createVehicleWithImages($request);
 
         if (isset($result['errors'])) {
