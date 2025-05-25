@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class DVSAVehicleController extends Controller
 {
@@ -65,6 +66,7 @@ class DVSAVehicleController extends Controller
                 return response()->json(['error' => 'Failed to retrieve vehicle details'], $response->getStatusCode());
             }
         } catch (\Exception $e) {
+            Log::error('DVSA MOT API error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
