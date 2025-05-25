@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 use App\Services\VehicleService;
+use Illuminate\Support\Facades\Log;
 
 class ScsCarController extends Controller
 {
@@ -14,6 +15,7 @@ class ScsCarController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+         Log::info('ScsCarController@store hit');
         $result = $this->vehicleService->createVehicleWithImages($request);
 
         if (isset($result['errors'])) {

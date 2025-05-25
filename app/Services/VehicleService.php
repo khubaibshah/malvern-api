@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Validator;
 
 class VehicleService
 {
-    public function __construct(protected AwsS3Service $awsS3) {}
+    public function __construct(protected AwsS3Service $awsS3) {
+        Log::info('VehicleService constructor called');
+    }
 
     public function createVehicleWithImages(Request $request): array
     {
