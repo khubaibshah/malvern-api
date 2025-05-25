@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Validator;
 
 class VehicleService
 {
-    public function __construct(protected AwsS3Service $awsS3) {
+    public function __construct(protected AwsS3Service $awsS3)
+    {
         Log::info('VehicleService constructor called');
     }
 
@@ -18,6 +19,16 @@ class VehicleService
     {
         try {
             Log::info('createVehicleWithImages: starting validation');
+            Log::info('Raw car_images', ['input' => $request->input('car_images')]);
+            Log::info('Files car_images', ['files' => $request->file('car_images')]);
+
+            // Inspect file info before validating
+            if ($request->hasFile('car_images')) {
+                foreach ($request->file('car_images') as $file) {
+                    Log::info('Pre-validation MIME type', ['mime' => $file->getMimeType()]);
+                    Log::info('Pre-validation extension', ['ext' => $file->getClientOriginalExtension()]);
+                }
+            }
 
             $validator = Validator::make($request->all(), [
                 'make' => 'required|string|max:255',
@@ -35,7 +46,8 @@ class VehicleService
                 'veh_status' => 'nullable|string|max:255',
                 'description' => 'required|string',
                 'car_images' => 'required|array',
-                'car_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+                'car_images.*' => 'file|mimes:jpeg,png,jpg,gif,svg,avif|max:5120',
+
             ]);
 
             Log::info('createVehicleWithImages: finished validation');
@@ -72,9 +84,12 @@ class VehicleService
             ]));
 
             Log::info('createVehicleWithImages: uploading images');
-            if ($request->has('car_images')) {
+            if ($request->hasFile('car_images')) {
                 foreach ($request->file('car_images') as $image) {
+                    Log::info('File MIME type', ['mime' => $image->getMimeType()]);
+                    Log::info('File extension', ['ext' => $image->getClientOriginalExtension()]);
                     Log::info('createVehicleWithImages: processing image');
+
                     if ($image->isValid()) {
                         Log::info('createVehicleWithImages: image is valid, uploading to S3');
                         $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
@@ -83,6 +98,11 @@ class VehicleService
                         ScsCarImage::create([
                             'scs_car_id' => $car->id,
                             'car_image' => $url,
+                        ]);
+                    } else {
+                        Log::warning('createVehicleWithImages: image is not valid', [
+                            'originalName' => $image->getClientOriginalName(),
+                            'mime' => $image->getMimeType()
                         ]);
                     }
                 }
@@ -103,6 +123,7 @@ class VehicleService
             ];
         }
     }
+
 
 
 
