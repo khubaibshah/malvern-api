@@ -17,9 +17,8 @@ class DVSAVehicleController extends Controller
             return Cache::get('ves_access_token');
         }
 
-        $client = new Client([
-            'verify' => env('SSL_URL'),
-        ]);
+        $client = new Client(); // No verify param unless needed
+
 
         $response = $client->post('https://login.microsoftonline.com/a455b827-244f-4c97-b5b4-ce5d13b4d00c/oauth2/v2.0/token', [
             'form_params' => [
@@ -45,10 +44,7 @@ class DVSAVehicleController extends Controller
         // Create a Guzzle Client instance with SSL certificate verification
         $accessToken = $this->authenticateVes(); // Get the access token from Microsoft
 
-        $client = new Client([
-            'verify' => env('SSL_URL'), // You can set this to false for local testing
-        ]);
-
+        $client = new Client(); // No verify param unless needed
         try {
             $response = $client->get("https://history.mot.api.gov.uk/v1/trade/vehicles/registration/$registrationNumber", [
                 'headers' => [
