@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ScsCar;
 use App\Models\ScsCarImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class VehicleService
@@ -34,7 +35,7 @@ class VehicleService
             ]);
 
             if ($validator->fails()) {
-                \Log::warning('Validation failed in createVehicleWithImages', [
+                Log::warning('Validation failed in createVehicleWithImages', [
                     'errors' => $validator->errors()->toArray()
                 ]);
                 return ['errors' => $validator->errors(), 'status' => 400];
@@ -79,7 +80,7 @@ class VehicleService
 
             return ['car' => $car, 'status' => 201];
         } catch (\Exception $e) {
-            \Log::error('createVehicleWithImages failed', [
+            Log::error('createVehicleWithImages failed', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
