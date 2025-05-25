@@ -28,7 +28,8 @@ class VehicleService
             'veh_type' => 'required|string|max:255',
             'veh_status' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'car_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'car_images' => 'required|array',
+            'car_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120',        
         ]);
 
         if ($validator->fails()) {
@@ -60,14 +61,15 @@ class VehicleService
             'description'
         ]));
 
-        if ($request->hasFile('car_images')) {
+        if ($request->has('car_images')) {
             foreach ($request->file('car_images') as $image) {
-                $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
-
-                ScsCarImage::create([
-                    'scs_car_id' => $car->id,
-                    'car_image' => $url,
-                ]);
+                if ($image->isValid()) {
+                    $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
+                    ScsCarImage::create([
+                        'scs_car_id' => $car->id,
+                        'car_image' => $url,
+                    ]);
+                }
             }
         }
 

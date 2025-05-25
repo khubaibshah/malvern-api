@@ -25,3 +25,7 @@ Route::get('/customer-job-sub-categories', [JobSubCategoryController::class, 'in
 Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCategoriesWithSubcategories']);
 
 
+//crud for vehicle
+
+Route::post('/upload-scs-car', [ScsCarController::class, 'store']);
+Route::put('/update-car/{id}', [ScsCarController::class, 'put']);
