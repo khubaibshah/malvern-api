@@ -9,6 +9,7 @@ use App\Http\Controllers\InfoController;
 use App\Http\Controllers\CustomerBookingController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobSubCategoryController;
+use Illuminate\Support\Facades\Log;
 
 // Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
 Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::class, 'VesVehicleDetails']);
