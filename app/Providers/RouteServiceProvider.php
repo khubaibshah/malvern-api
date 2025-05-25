@@ -30,6 +30,9 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('admin', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+        RateLimiter::for('scs', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
 
         $this->routes(function () {
             Route::middleware('api')
@@ -43,6 +46,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->middleware(['admin'])
                 ->prefix('admin')
                 ->group(base_path('routes/admin.php'));
+                
+            Route::prefix('scs')
+                ->middleware(['scs'])
+                ->prefix('scs')
+                ->group(base_path('routes/scs.php'));
         }); 
     }
 }

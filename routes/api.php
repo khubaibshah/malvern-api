@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\CustomerBookingController;
+use App\Http\Controllers\DVSAVehicleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAuthController;
@@ -48,7 +49,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('/scs-car-images', [ScsCarImageController::class, 'getAllCarsImages']);
     Route::get('/scs-cars', [ScsCarImageController::class, 'getAllCars']);
     Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
-
+    Route::get('/dvsa-vehicle-details/{registrationNumber}', [DVSAVehicleController::class, 'getMOTTests']);
+    Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::class, 'VesVehicleDetails']);
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::get('/admin-bookings', [AdminBookingController::class, 'index']);
     Route::post('/admin-bookings', [AdminBookingController::class, 'store']);

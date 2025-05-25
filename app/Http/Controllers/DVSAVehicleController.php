@@ -19,8 +19,8 @@ class DVSAVehicleController extends Controller
         }
 
         $client = new Client([
-    'verify' => false
-]); // No verify param unless needed
+            'verify' => false
+        ]); // No verify param unless needed
 
 
         $response = $client->post('https://login.microsoftonline.com/a455b827-244f-4c97-b5b4-ce5d13b4d00c/oauth2/v2.0/token', [
@@ -43,15 +43,18 @@ class DVSAVehicleController extends Controller
 
     public function getMOTTests($registrationNumber)
     {
-        // No need to validate $registrationNumber here, as it's part of the URL
-        // Create a Guzzle Client instance with SSL certificate verification
-        $accessToken = $this->authenticateVes(); // Get the access token from Microsoft
+        Log::info('DVSA API Request Initiated', ['registration' => $registrationNumber]);
 
-        $client = new Client([
-    'verify' => false
-]); // No verify param unless needed
         try {
-            $response = $client->get("https://history.mot.api.gov.uk/v1/trade/vehicles/registration/$registrationNumber", [
+            $accessToken = $this->authenticateVes();
+            Log::debug('Access token obtained', ['token' => substr($accessToken, 0, 10) . '...']);
+
+            $client = new Client(['verify' => false]);
+            $apiUrl = "https://history.mot.api.gov.uk/v1/trade/vehicles/registration/$registrationNumber";
+
+            Log::debug('Making request to DVSA API', ['url' => $apiUrl]);
+
+            $response = $client->get($apiUrl, [
                 'headers' => [
                     'Authorization' => "Bearer $accessToken",
                     'X-API-Key' => env('DVSA_API_KEY'),
@@ -59,15 +62,25 @@ class DVSAVehicleController extends Controller
                 ]
             ]);
 
-            if ($response->getStatusCode() === 200) {
+            $statusCode = $response->getStatusCode();
+            Log::info('DVSA API Response', ['status' => $statusCode]);
+
+            if ($statusCode === 200) {
                 $decodedResponse = json_decode($response->getBody()->getContents(), true);
-                return response()->json($decodedResponse, 200, [], JSON_PRETTY_PRINT);
-            } else {
-                return response()->json(['error' => 'Failed to retrieve vehicle details'], $response->getStatusCode());
+                return response()->json($decodedResponse);
             }
+
+            return response()->json(['error' => 'Failed to retrieve vehicle details'], $statusCode);
         } catch (\Exception $e) {
-            Log::error('DVSA MOT API error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error('DVSA API Error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'registration' => $registrationNumber
+            ]);
+            return response()->json([
+                'error' => 'DVSA API request failed',
+                'details' => $e->getMessage()
+            ], 500);
         }
     }
 }

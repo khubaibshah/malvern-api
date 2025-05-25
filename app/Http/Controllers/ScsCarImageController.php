@@ -94,6 +94,6 @@ class ScsCarImageController extends Controller
      */
     public function getAllCars(): JsonResponse
     {
-        return response()->json(ScsCar::with('images')->get());
+        return response()->json(ScsCar::get());
     }
 }
