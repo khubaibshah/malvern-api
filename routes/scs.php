@@ -25,3 +25,7 @@ Route::get('/customer-job-sub-categories', [JobSubCategoryController::class, 'in
 Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCategoriesWithSubcategories']);
 
 
+
+//get vehicles to display 
+Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
+Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);

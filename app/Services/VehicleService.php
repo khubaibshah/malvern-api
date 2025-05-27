@@ -111,6 +111,32 @@ class VehicleService
         return ['message' => 'Vehicle updated successfully', 'car' => $vehicle, 'status' => 200];
     }
 
+    public function getAll(): array
+    {
+        try {
+            $vehicles = ScsCar::all();
+
+            $carsWithImages = $vehicles->map(function ($car) {
+                $folder = "car_images/{$car->registration}";
+                $imagePaths = $this->awsS3->listFiles($folder);
+                $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $imagePaths);
+
+                $car->images = $imageUrls;
+                return $car;
+            });
+
+            return ['cars' => $carsWithImages, 'status' => 200];
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch all vehicles', ['error' => $e->getMessage()]);
+            return [
+                'error' => 'Server error while fetching vehicles.',
+                'status' => 500
+            ];
+        }
+    }
+
+
+
     //updateVehicleWithImages
     public function updateVehicleWithImages() {}
 }

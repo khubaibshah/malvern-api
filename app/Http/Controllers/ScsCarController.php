@@ -15,8 +15,8 @@ class ScsCarController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-         Log::info('ScsCarController@store hit');
-         Log::debug('VehicleService::__construct hit test');
+        Log::info('ScsCarController@store hit');
+        Log::debug('VehicleService::__construct hit test');
         $result = $this->vehicleService->createVehicleWithImages($request);
         Log::debug('VehicleService result', $result);
 
@@ -46,7 +46,7 @@ class ScsCarController extends Controller
         return response()->json(['message' => $result['message'], 'car' => $result['car']], $result['status']);
     }
 
-    //get vehicle data and images from s3
+    //get vehicle data and images from s3 using vehicle id one vehicle 
     public function get($vehicleId): JsonResponse
     {
         $result = $this->vehicleService->getVehicleWithImages($vehicleId);
@@ -60,5 +60,16 @@ class ScsCarController extends Controller
         }
 
         return response()->json(['message' => $result['message'], 'car' => $result['car']], $result['status']);
+    }
+
+    public function getAllVehiclesWithImages(): JsonResponse
+    {
+        $result = $this->vehicleService->getAll();
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => $result['error']], $result['status']);
+        }
+
+        return response()->json(['cars' => $result['cars']], $result['status']);
     }
 }
