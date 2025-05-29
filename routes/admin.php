@@ -30,3 +30,5 @@ Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCate
 
 Route::post('/vehicle-upload', [ScsCarController::class, 'store']);
 Route::put('/update-car/{id}', [ScsCarController::class, 'put']);
+Route::post('/featured-vehicle', [ScsCarController::class, 'featuredVehicled']);
+Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);

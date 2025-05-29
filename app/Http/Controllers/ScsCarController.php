@@ -72,4 +72,16 @@ class ScsCarController extends Controller
 
         return response()->json(['cars' => $result['cars']], $result['status']);
     }
+
+    //for front end
+    public function advancedFilters(): JsonResponse
+    {
+
+    }
+
+    public function featuredVehicled(): JsonResponse
+    {
+
+
+    }
 }
