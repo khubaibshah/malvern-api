@@ -18,6 +18,26 @@ class VehicleService
     public function createVehicleWithImages(Request $request): array
     {
         try {
+            Log::info('Raw file data from request', [
+                'hasFile' => $request->hasFile('car_images'),
+                'car_images' => $request->file('car_images'),
+                'all_files' => $request->allFiles(),
+            ]);
+
+            if ($request->hasFile('car_images')) {
+                foreach ($request->file('car_images') as $index => $file) {
+                    Log::info("Incoming file details", [
+                        'index' => $index,
+                        'original_name' => $file->getClientOriginalName(),
+                        'mime_type' => $file->getMimeType(),
+                        'extension' => $file->getClientOriginalExtension(),
+                        'size_kb' => $file->getSize() / 1024,
+                        'is_valid' => $file->isValid(),
+                        'error_code' => $file->getError(), // very important
+                    ]);
+                }
+            }
+
             $validator = Validator::make($request->all(), [
                 'make' => 'required|string|max:255',
                 'model' => 'required|string|max:255',
@@ -34,10 +54,14 @@ class VehicleService
                 'veh_status' => 'nullable|string|max:255',
                 'description' => 'required|string',
                 'car_images' => 'required|array',
-                'car_images.*' => 'file|mimes:jpeg,png,jpg,gif,svg,avif|max:5120',
+                'car_images.*' => 'file|mimes:jpeg,png,jpg,gif,svg,avif|max:51200',
             ]);
 
             if ($validator->fails()) {
+                Log::warning('Validation failed in createVehicleWithImages', [
+                    'errors' => $validator->errors()->toArray()
+                ]);
+
                 return ['errors' => $validator->errors(), 'status' => 400];
             }
 
@@ -69,10 +93,23 @@ class VehicleService
             if ($request->hasFile('car_images')) {
                 foreach ($request->file('car_images') as $image) {
                     if ($image->isValid()) {
-                        $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
-                        ScsCarImage::create([
-                            'scs_car_id' => $car->id,
-                            'car_image' => $url,
+                        try {
+                            $url = $this->awsS3->uploadFile($image, "car_images/{$car->registration}");
+
+                            ScsCarImage::create([
+                                'scs_car_id' => $car->id,
+                                'car_image' => $url,
+                            ]);
+                        } catch (\Exception $uploadException) {
+                            Log::error('Image upload failed', [
+                                'filename' => $image->getClientOriginalName(),
+                                'message' => $uploadException->getMessage(),
+                            ]);
+                            throw $uploadException;
+                        }
+                    } else {
+                        Log::error('Invalid image file encountered', [
+                            'filename' => $image->getClientOriginalName()
                         ]);
                     }
                 }
@@ -80,6 +117,11 @@ class VehicleService
 
             return ['car' => $car, 'status' => 201];
         } catch (\Exception $e) {
+            Log::error('Exception in createVehicleWithImages', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return [
                 'error' => 'Server error occurred while creating vehicle.',
                 'message' => $e->getMessage(),
