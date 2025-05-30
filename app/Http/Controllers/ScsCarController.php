@@ -85,16 +85,17 @@ class ScsCarController extends Controller
         Log::info('generatePresignedUploadUrl called', [
     'filename' => $request->input('filename'),
     'contentType' => $request->input('contentType'),
+        ]);
+
+       $s3 = new S3Client([
+    'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'), 
+    'version' => 'latest',
+    'credentials' => [
+        'key'    => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    ]
 ]);
 
-        $s3 = new S3Client([
-            'region' => 'your-region',
-            'version' => 'latest',
-            'credentials' => [
-                'key'    => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            ]
-        ]);
 
         $key = 'car_images/' . uniqid() . '_' . $request->input('filename');
         $bucket = env('AWS_BUCKET');
