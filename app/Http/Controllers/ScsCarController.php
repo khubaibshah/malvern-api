@@ -79,9 +79,14 @@ class ScsCarController extends Controller
 
     public function featuredVehicled(): JsonResponse {}
 
-    
+
     public function generatePresignedUploadUrl(Request $request)
     {
+        Log::info('generatePresignedUploadUrl called', [
+    'filename' => $request->input('filename'),
+    'contentType' => $request->input('contentType'),
+]);
+
         $s3 = new S3Client([
             'region' => 'your-region',
             'version' => 'latest',
