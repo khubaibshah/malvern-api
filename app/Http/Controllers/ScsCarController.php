@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 use App\Services\VehicleService;
+use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
 
 class ScsCarController extends Controller
@@ -74,14 +75,37 @@ class ScsCarController extends Controller
     }
 
     //for front end
-    public function advancedFilters(): JsonResponse
+    public function advancedFilters(): JsonResponse {}
+
+    public function featuredVehicled(): JsonResponse {}
+
+    
+    public function generatePresignedUploadUrl(Request $request)
     {
+        $s3 = new S3Client([
+            'region' => 'your-region',
+            'version' => 'latest',
+            'credentials' => [
+                'key'    => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            ]
+        ]);
 
-    }
+        $key = 'car_images/' . uniqid() . '_' . $request->input('filename');
+        $bucket = env('AWS_BUCKET');
 
-    public function featuredVehicled(): JsonResponse
-    {
+        $cmd = $s3->getCommand('PutObject', [
+            'Bucket' => $bucket,
+            'Key'    => $key,
+            'ContentType' => $request->input('contentType'),
+            'ACL' => 'public-read',
+        ]);
 
+        $request = $s3->createPresignedRequest($cmd, '+5 minutes');
 
+        return response()->json([
+            'url' => (string) $request->getUri(),
+            'key' => $key,
+        ]);
     }
 }

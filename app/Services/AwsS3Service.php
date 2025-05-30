@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Aws\S3\S3Client;
+use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -37,4 +39,7 @@ class AwsS3Service
     {
         return Storage::disk($disk)->files($directory);
     }
+
+
+   
 }
