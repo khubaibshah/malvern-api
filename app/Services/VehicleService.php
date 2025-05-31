@@ -54,8 +54,8 @@ class VehicleService
                 'veh_status' => 'nullable|string|max:255',
                 'description' => 'required|string',
                 'car_images' => 'required|array',
-                'car_images.*' => 'file|mimes:jpeg,png,jpg,gif,svg,avif|max:51200',
-            ]);
+                'car_images.*' => 'string', // Now expecting S3 keys instead of files            
+                ]);
 
             if ($validator->fails()) {
                 Log::warning('Validation failed in createVehicleWithImages', [

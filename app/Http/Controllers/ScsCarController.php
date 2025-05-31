@@ -82,27 +82,23 @@ class ScsCarController extends Controller
 
     public function generatePresignedUploadUrl(Request $request)
     {
-        Log::info('generatePresignedUploadUrl called', [
-    'filename' => $request->input('filename'),
-    'contentType' => $request->input('contentType'),
+        $s3 = new S3Client([
+            'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
+            'version' => 'latest',
+            'credentials' => [
+                'key'    => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            ]
         ]);
 
-       $s3 = new S3Client([
-    'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'), 
-    'version' => 'latest',
-    'credentials' => [
-        'key'    => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-    ]
-]);
-
-
-        $key = 'car_images/' . uniqid() . '_' . $request->input('filename');
+        $registration = strtoupper(preg_replace('/[^A-Z0-9]/', '', $request->input('registration', 'unknown')));
+        $filename = uniqid() . '_' . $request->input('filename');
+        $key = "car_images/{$registration}/{$filename}";
         $bucket = env('AWS_BUCKET');
 
         $cmd = $s3->getCommand('PutObject', [
             'Bucket' => $bucket,
-            'Key'    => $key,
+            'Key' => $key,
             'ContentType' => $request->input('contentType'),
             'ACL' => 'public-read',
         ]);
