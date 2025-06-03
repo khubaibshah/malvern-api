@@ -6,6 +6,7 @@ use App\Models\ScsCar;
 use App\Models\ScsCarImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class VehicleService
@@ -80,7 +81,7 @@ class VehicleService
                     'car_image' => $s3Key,
                     'is_main' => $index === $mainImageIndex, // Set main image flag
                 ];
-
+                // dd($imageData);
                 ScsCarImage::create($imageData);
             }
 
@@ -140,6 +141,27 @@ class VehicleService
                 'status' => 500
             ];
         }
+    }
+
+
+    public function deleteImageFromS3ByUrl(string $imageUrl): array
+    {
+        $baseUrl = Storage::disk('s3')->url('');
+        $s3Key = str_replace($baseUrl, '', $imageUrl);
+
+        if (!app(AwsS3Service::class)->fileExists($s3Key)) {
+            return [
+                'success' => false,
+                'message' => 'File does not exist on S3.',
+                'status' => 404
+            ];
+        }
+
+        $deleted = $this->awsS3->deleteFile($s3Key);
+
+        return $deleted
+            ? ['success' => true, 'message' => 'Image deleted successfully.', 'status' => 200]
+            : ['success' => false, 'message' => 'Failed to delete image from S3.', 'status' => 500];
     }
 
 

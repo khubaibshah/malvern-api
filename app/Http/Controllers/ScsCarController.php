@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\ScsCar;
+use App\Services\AwsS3Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 use App\Services\VehicleService;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ScsCarController extends Controller
 {
@@ -110,4 +112,18 @@ class ScsCarController extends Controller
             'key' => $key,
         ]);
     }
+
+   public function deleteS3Image(Request $request): JsonResponse
+{
+    $imageUrl = $request->input('image_url');
+
+    $result = $this->vehicleService->deleteImageFromS3ByUrl($imageUrl);
+
+    if (!$result['success']) {
+        return response()->json(['error' => $result['message']], $result['status']);
+    }
+
+    return response()->json(['message' => $result['message']], $result['status']);
+}
+
 }

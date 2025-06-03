@@ -30,6 +30,8 @@ Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCate
 
 Route::post('/vehicle-upload', [ScsCarController::class, 'store']);
 Route::post('/s3-presigned-url', [ScsCarController::class, 'generatePresignedUploadUrl']);
+Route::post('/delete-s3-image', [ScsCarController::class, 'deleteS3Image']);
+
 Route::put('/update-car/{id}', [ScsCarController::class, 'put']);
 Route::post('/featured-vehicle', [ScsCarController::class, 'featuredVehicled']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
