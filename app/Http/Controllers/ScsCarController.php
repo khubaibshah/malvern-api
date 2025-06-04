@@ -82,21 +82,22 @@ class ScsCarController extends Controller
     // public function featuredVehicled(): JsonResponse {}
 
 
+
     public function generatePresignedUploadUrl(Request $request)
     {
         $s3 = new S3Client([
-            'region' => env('AWS_DEFAULT_REGION', 'eu-west-2'),
+            'region' => config('filesystems.disks.s3.region'),
             'version' => 'latest',
             'credentials' => [
-                'key'    => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'key' => config('filesystems.disks.s3.key'),
+                'secret' => config('filesystems.disks.s3.secret'),
             ]
         ]);
 
         $registration = strtoupper(preg_replace('/[^A-Z0-9]/', '', $request->input('registration', 'unknown')));
         $filename = uniqid() . '_' . $request->input('filename');
         $key = "car_images/{$registration}/{$filename}";
-        $bucket = env('AWS_BUCKET');
+        $bucket = config('filesystems.disks.s3.bucket');
 
         $cmd = $s3->getCommand('PutObject', [
             'Bucket' => $bucket,
@@ -105,25 +106,25 @@ class ScsCarController extends Controller
             'ACL' => 'public-read',
         ]);
 
-        $request = $s3->createPresignedRequest($cmd, '+5 minutes');
+        $presignedRequest = $s3->createPresignedRequest($cmd, '+5 minutes');
 
         return response()->json([
-            'url' => (string) $request->getUri(),
+            'url' => (string) $presignedRequest->getUri(),
             'key' => $key,
         ]);
     }
 
-   public function deleteS3Image(Request $request): JsonResponse
-{
-    $imageUrl = $request->input('image_url');
 
-    $result = $this->vehicleService->deleteImageFromS3ByUrl($imageUrl);
+    public function deleteS3Image(Request $request): JsonResponse
+    {
+        $imageUrl = $request->input('image_url');
 
-    if (!$result['success']) {
-        return response()->json(['error' => $result['message']], $result['status']);
+        $result = $this->vehicleService->deleteImageFromS3ByUrl($imageUrl);
+
+        if (!$result['success']) {
+            return response()->json(['error' => $result['message']], $result['status']);
+        }
+
+        return response()->json(['message' => $result['message']], $result['status']);
     }
-
-    return response()->json(['message' => $result['message']], $result['status']);
-}
-
 }

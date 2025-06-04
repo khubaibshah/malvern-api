@@ -30,5 +30,10 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    'dvsa' => [
+        'api_key' => env('DVSA_API_KEY'),
+        'client_id' => env('API_CLIENT_ID'),
+        'client_secret' => env('API_CLIENT_SECRET'),
+        'scope' => env('SCOPE'),
+    ],
 ];

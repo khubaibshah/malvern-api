@@ -72,7 +72,7 @@ class VehicleService
             ]));
 
             $mainImageIndex = $request->input('main_image_index', 0);
-            dd($mainImageIndex);
+            // dd($mainImageIndex);
             $carImages = $request->input('car_images', []);
 
             foreach ($carImages as $index => $s3Key) {
