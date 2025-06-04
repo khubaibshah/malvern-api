@@ -167,5 +167,78 @@ class VehicleService
 
 
     //updateVehicleWithImages
-    public function updateVehicleWithImages() {}
+    public function updateVehicleWithImages(Request $request, int $vehicleId): array
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'make' => 'required|string|max:255',
+                'model' => 'required|string|max:255',
+                'year' => 'required|integer|min:1900|max:' . date('Y'),
+                'registration' => 'required|string|max:255',
+                'variant' => 'nullable|string|max:255',
+                'price' => 'required|numeric',
+                'mileage' => 'required|integer',
+                'fuel_type' => 'required|string|max:255',
+                'colour' => 'required|string|max:255',
+                'doors' => 'nullable|integer|min:0|max:10',
+                'veh_type' => 'required|string|max:255',
+                'description' => 'required|string',
+                'car_images' => 'nullable|array',
+                'car_images.*' => 'string', // S3 keys
+                'main_image' => 'nullable|string', // main image key
+            ]);
+
+            if ($validator->fails()) {
+                return ['errors' => $validator->errors(), 'status' => 422];
+            }
+
+            $car = ScsCar::find($vehicleId);
+
+            if (!$car) {
+                return ['error' => 'Vehicle not found', 'status' => 404];
+            }
+
+            // Update vehicle details
+            $car->update($request->only([
+                'make',
+                'model',
+                'year',
+                'registration',
+                'variant',
+                'price',
+                'mileage',
+                'fuel_type',
+                'colour',
+                'doors',
+                'veh_type',
+                'description'
+            ]));
+
+            // Remove old images and replace with new ones (if images are provided)
+            if ($request->has('car_images')) {
+                ScsCarImage::where('scs_car_id', $car->id)->delete();
+
+                foreach ($request->input('car_images', []) as $imageKey) {
+                    ScsCarImage::create([
+                        'scs_car_id' => $car->id,
+                        'car_image' => $imageKey,
+                        'is_main' => $imageKey === $request->input('main_image'),
+                    ]);
+                }
+            }
+
+            return ['message' => 'Vehicle updated successfully', 'car' => $car->fresh(), 'status' => 200];
+        } catch (\Exception $e) {
+            Log::error('Exception in updateVehicleWithImages', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'error' => 'Server error occurred while updating vehicle.',
+                'message' => $e->getMessage(),
+                'status' => 500
+            ];
+        }
+    }
 }
