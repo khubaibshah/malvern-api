@@ -85,7 +85,7 @@ class VehicleService
                 ScsCarImage::create($imageData);
             }
 
-            return ['car' => $car, 'status' => 201];
+            return ['car' => $car->toArray(), 'status' => 201];
         } catch (\Exception $e) {
             Log::error('Exception in createVehicleWithImages', [
                 'message' => $e->getMessage(),

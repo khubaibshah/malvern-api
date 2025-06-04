@@ -26,7 +26,6 @@ class ScsCarController extends Controller
         if (isset($result['errors'])) {
             return response()->json(['errors' => $result['errors']], $result['status']);
         }
-
         return response()->json([
             'message' => 'Car and images successfully created and uploaded',
             'car' => $result['car']
