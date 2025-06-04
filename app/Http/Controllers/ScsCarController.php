@@ -77,9 +77,9 @@ class ScsCarController extends Controller
     }
 
     //for front end
-    public function advancedFilters(): JsonResponse {}
+    // public function advancedFilters(): JsonResponse {}
 
-    public function featuredVehicled(): JsonResponse {}
+    // public function featuredVehicled(): JsonResponse {}
 
 
     public function generatePresignedUploadUrl(Request $request)

@@ -218,12 +218,21 @@ class VehicleService
             if ($request->has('car_images')) {
                 ScsCarImage::where('scs_car_id', $car->id)->delete();
 
-                foreach ($request->input('car_images', []) as $imageKey) {
+                $images = $request->input('car_images', []);
+                $mainImageKey = $request->input('main_image');
+
+                foreach ($images as $imageKey) {
                     ScsCarImage::create([
                         'scs_car_id' => $car->id,
                         'car_image' => $imageKey,
-                        'is_main' => $imageKey === $request->input('main_image'),
+                        'is_main' => $imageKey === $mainImageKey,
                     ]);
+                }
+
+                // Also update the car's main_image column if present
+                if ($mainImageKey) {
+                    $car->main_image = $mainImageKey;
+                    $car->save();
                 }
             }
 
