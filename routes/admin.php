@@ -33,5 +33,5 @@ Route::post('/s3-presigned-url', [ScsCarController::class, 'generatePresignedUpl
 Route::post('/delete-s3-image', [ScsCarController::class, 'deleteS3Image']);
 
 Route::put('/update-car/{id}', [ScsCarController::class, 'put']);
-Route::post('/featured-vehicle', [ScsCarController::class, 'featuredVehicled']);
+Route::post('/featured-vehicle', [ScsCarController::class, 'setFeaturedVehicled']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
