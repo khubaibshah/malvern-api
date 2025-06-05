@@ -35,9 +35,13 @@ class VehicleService
                 'veh_status' => 'nullable|string|max:255',
                 'description' => 'required|string',
                 'car_images' => 'required|array',
-                'car_images.*' => 'string', // Expecting S3 keys
-                'main_image_index' => 'nullable|integer|min:0', // New optional field
+                'car_images.*' => 'string',
+                'main_image_index' => 'nullable|integer|min:0',
+                'registration_date' => 'nullable|date',
+                'gearbox' => 'nullable|string|max:255',
+                'keys' => 'nullable|string|max:255',
             ]);
+
 
             if ($validator->fails()) {
                 Log::warning('Validation failed in createVehicleWithImages', [
@@ -45,7 +49,7 @@ class VehicleService
                 ]);
                 return ['errors' => $validator->errors(), 'status' => 400];
             }
-
+            Log::alert('car data incoming', $request->all());
             $car = ScsCar::create($request->only([
                 'registration',
                 'make',
@@ -53,23 +57,23 @@ class VehicleService
                 'year',
                 'vrm',
                 'reg_date',
-                'man_year',
+                'registration_date', // <-- This line must be added
                 'variant',
                 'price',
-                'was_price',
                 'mileage',
                 'engine_cc',
                 'fuel_type',
                 'body_style',
                 'colour',
                 'doors',
+                'gearbox', // <-- Add if not there yet
+                'keys',    // <-- Add if tracking number of keys
                 'veh_type',
-                'veh_status',
-                'stock_id',
-                'ebay_gt_title',
-                'subtitle',
                 'description'
             ]));
+
+
+
 
             $mainImageIndex = $request->input('main_image_index', 0);
             // dd($mainImageIndex);
