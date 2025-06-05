@@ -190,6 +190,9 @@ class VehicleService
                 'car_images' => 'nullable|array',
                 'car_images.*' => 'string', // S3 keys
                 'main_image' => 'nullable|string', // main image key
+                'registration_date' => 'nullable|date',
+                'gearbox' => 'nullable|string|max:255',
+                'keys' => 'nullable|integer|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -215,7 +218,12 @@ class VehicleService
                 'colour',
                 'doors',
                 'veh_type',
-                'description'
+                'description',
+                'body_style',
+                'gearbox', // <-- Add if not there yet
+                'keys',    // <-- Add if tracking number of keys
+                'registration_date', // <-- This line must be added
+
             ]));
 
             // Remove old images and replace with new ones (if images are provided)
