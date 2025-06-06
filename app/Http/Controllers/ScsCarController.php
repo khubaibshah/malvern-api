@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ScsCar;
 use App\Services\AwsS3Service;
+use App\Services\LeadService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -17,30 +18,30 @@ class ScsCarController extends Controller
     public function __construct(protected VehicleService $vehicleService) {}
 
     public function store(Request $request): JsonResponse
-{
-    Log::info('ScsCarController@store hit');
-    Log::debug('VehicleService::__construct hit test');
+    {
+        Log::info('ScsCarController@store hit');
+        Log::debug('VehicleService::__construct hit test');
 
-    $result = $this->vehicleService->createVehicleWithImages($request);
-    Log::debug('VehicleService result', $result);
+        $result = $this->vehicleService->createVehicleWithImages($request);
+        Log::debug('VehicleService result', $result);
 
-    if (isset($result['errors'])) {
-        return response()->json(['errors' => $result['errors']], $result['status']);
-    }
+        if (isset($result['errors'])) {
+            return response()->json(['errors' => $result['errors']], $result['status']);
+        }
 
-    if (isset($result['car'])) {
+        if (isset($result['car'])) {
+            return response()->json([
+                'message' => 'Car and images successfully created and uploaded',
+                'car' => $result['car']
+            ], $result['status']);
+        }
+
+        // fallback for unexpected structure
         return response()->json([
-            'message' => 'Car and images successfully created and uploaded',
-            'car' => $result['car']
-        ], $result['status']);
+            'error' => $result['error'] ?? 'Unknown error occurred.',
+            'message' => $result['message'] ?? '',
+        ], $result['status'] ?? 500);
     }
-
-    // fallback for unexpected structure
-    return response()->json([
-        'error' => $result['error'] ?? 'Unknown error occurred.',
-        'message' => $result['message'] ?? '',
-    ], $result['status'] ?? 500);
-}
 
 
     //update vehicle data and images
@@ -147,5 +148,30 @@ class ScsCarController extends Controller
         }
 
         return response()->json(['message' => $result['message']], $result['status']);
+    }
+
+    public function lead(Request $request, LeadService $leadService)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'message' => 'required|string',
+            'vehicle_id' => 'nullable|integer|exists:scs_cars,id',
+        ]);
+
+        try {
+            $lead = $leadService->createLead($validated);
+
+            return response()->json([
+                'message' => 'Lead submitted successfully.',
+                'lead' => $lead
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to submit lead.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -30,3 +30,4 @@ Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCate
 Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
 Route::post('/advanced-filters', [ScsCarController::class, 'advancedFilters']);
+Route::post('/lead', [ScsCarController::class, 'lead']);

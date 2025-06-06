@@ -56,6 +56,7 @@ return [
             //     'timeout' => 5,
             // ],
         ],
+        
 
         'postmark' => [
             'transport' => 'postmark',
@@ -123,4 +124,7 @@ return [
         ],
     ],
 
+    // Custom lead email recipient
+    'leads_to' => env('MAIL_LEADS_TO', 'khubaib_12@hotmail.com'),
 ];
+
