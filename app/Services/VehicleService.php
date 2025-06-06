@@ -40,8 +40,8 @@ class VehicleService
                 'registration_date' => 'nullable|date',
                 'gearbox' => 'nullable|string|max:255',
                 'keys' => 'nullable|string|max:255',
+                'engine_size' => 'nullable|integer|min:0' // <- Added
             ]);
-
 
             if ($validator->fails()) {
                 Log::warning('Validation failed in createVehicleWithImages', [
@@ -49,7 +49,9 @@ class VehicleService
                 ]);
                 return ['errors' => $validator->errors(), 'status' => 400];
             }
+
             Log::alert('car data incoming', $request->all());
+
             $car = ScsCar::create($request->only([
                 'registration',
                 'make',
@@ -57,35 +59,30 @@ class VehicleService
                 'year',
                 'vrm',
                 'reg_date',
-                'registration_date', // <-- This line must be added
+                'registration_date',
                 'variant',
                 'price',
                 'mileage',
-                'engine_cc',
                 'fuel_type',
                 'body_style',
                 'colour',
                 'doors',
-                'gearbox', // <-- Add if not there yet
-                'keys',    // <-- Add if tracking number of keys
+                'gearbox',
+                'keys',
                 'veh_type',
+                'engine_size',
                 'description'
             ]));
 
-
-
-
             $mainImageIndex = $request->input('main_image_index', 0);
-            // dd($mainImageIndex);
             $carImages = $request->input('car_images', []);
 
             foreach ($carImages as $index => $s3Key) {
                 $imageData = [
                     'scs_car_id' => $car->id,
                     'car_image' => $s3Key,
-                    'is_main' => $index === $mainImageIndex, // Set main image flag
+                    'is_main' => $index === $mainImageIndex,
                 ];
-                // dd($imageData);
                 ScsCarImage::create($imageData);
             }
 
@@ -188,11 +185,12 @@ class VehicleService
                 'veh_type' => 'required|string|max:255',
                 'description' => 'required|string',
                 'car_images' => 'nullable|array',
-                'car_images.*' => 'string', // S3 keys
-                'main_image' => 'nullable|string', // main image key
+                'car_images.*' => 'string',
+                'main_image' => 'nullable|string',
                 'registration_date' => 'nullable|date',
                 'gearbox' => 'nullable|string|max:255',
                 'keys' => 'nullable|integer|max:255',
+                'engine_size' => 'nullable|integer|min:0' // ✅ Added
             ]);
 
             if ($validator->fails()) {
@@ -205,7 +203,7 @@ class VehicleService
                 return ['error' => 'Vehicle not found', 'status' => 404];
             }
 
-            // Update vehicle details
+            // ✅ Update vehicle details including engine_size
             $car->update($request->only([
                 'make',
                 'model',
@@ -220,13 +218,13 @@ class VehicleService
                 'veh_type',
                 'description',
                 'body_style',
-                'gearbox', // <-- Add if not there yet
-                'keys',    // <-- Add if tracking number of keys
-                'registration_date', // <-- This line must be added
-
+                'gearbox',
+                'keys',
+                'registration_date',
+                'engine_size' // ✅ Added
             ]));
 
-            // Remove old images and replace with new ones (if images are provided)
+            // Replace images if provided
             if ($request->has('car_images')) {
                 ScsCarImage::where('scs_car_id', $car->id)->delete();
 
@@ -241,7 +239,6 @@ class VehicleService
                     ]);
                 }
 
-                // Also update the car's main_image column if present
                 if ($mainImageKey) {
                     $car->main_image = $mainImageKey;
                     $car->save();
