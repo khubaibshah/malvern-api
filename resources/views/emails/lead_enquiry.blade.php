@@ -1,7 +1,7 @@
 @component('mail::message')
 # 🚗 New Vehicle Lead
 
-You’ve received a new Lead from your website:
+You’ve received a new Lead:
 
 ---
 
