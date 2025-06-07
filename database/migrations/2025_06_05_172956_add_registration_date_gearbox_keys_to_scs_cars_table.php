@@ -8,15 +8,26 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('scs_cars', function (Blueprint $table) {
-            $table->string('gearbox')->nullable()->after('doors');
-            $table->string('keys')->nullable()->after('gearbox');
+            if (!Schema::hasColumn('scs_cars', 'gearbox')) {
+                $table->string('gearbox')->nullable()->after('doors');
+            }
+
+            if (!Schema::hasColumn('scs_cars', 'keys')) {
+                $table->string('keys')->nullable()->after('gearbox');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('scs_cars', function (Blueprint $table) {
-            $table->dropColumn(['gearbox', 'keys']);
+            if (Schema::hasColumn('scs_cars', 'gearbox')) {
+                $table->dropColumn('gearbox');
+            }
+
+            if (Schema::hasColumn('scs_cars', 'keys')) {
+                $table->dropColumn('keys');
+            }
         });
     }
 };
