@@ -30,9 +30,14 @@ You’ve received a new Lead from your website:
 
 @endif
 
-@component('mail::button', ['url' => url('/')])
-Go to Website
+@php
+    $vehicleUrl = config('app.frontend_url') . '/vehicle/' . $lead->vehicle->id;
+@endphp
+
+@component('mail::button', ['url' => $vehicleUrl])
+Go to Vehicle
 @endcomponent
+
 
 Thanks,  
 **SCS Car Sales Ltd**
