@@ -8,14 +8,18 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('scs_cars', function (Blueprint $table) {
-            $table->date('registration_date')->nullable()->after('registration');
+            if (!Schema::hasColumn('scs_cars', 'registration_date')) {
+                $table->date('registration_date')->nullable()->after('registration');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('scs_cars', function (Blueprint $table) {
-            $table->dropColumn('registration_date');
+            if (Schema::hasColumn('scs_cars', 'registration_date')) {
+                $table->dropColumn('registration_date');
+            }
         });
     }
 };
