@@ -9,10 +9,9 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::table('scs_cars', function (Blueprint $table) {
-        $table->dropColumn([
+    public function up()
+    {
+        $columns = [
             'vrm',
             'veh_status',
             'man_year',
@@ -26,16 +25,22 @@ return new class extends Migration
             'trade_price',
             'trade_text',
             'price_above_40k',
-        ]);
-    });
-}
+        ];
 
+        Schema::table('scs_cars', function (Blueprint $table) use ($columns) {
+            foreach ($columns as $column) {
+                if (Schema::hasColumn('scs_cars', $column)) {
+                    $table->dropColumn($column);
+                }
+            }
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        //
+        // You can optionally re-add the columns here
     }
 };
