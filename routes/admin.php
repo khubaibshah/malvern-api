@@ -35,3 +35,9 @@ Route::post('/delete-s3-image', [ScsCarController::class, 'deleteS3Image']);
 Route::put('/update-car/{id}', [ScsCarController::class, 'put']);
 Route::post('/featured-vehicle', [ScsCarController::class, 'setFeaturedVehicled']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
+
+Route::post('/archive-vehicles', [ScsCarController::class, 'archiveVehicles']);
+Route::get('/archived-vehicles', [ScsCarController::class, 'getArchivedVehicles']);
+
+Route::post('/delete-vehicles', [ScsCarController::class, 'deleteVehicles']);
+

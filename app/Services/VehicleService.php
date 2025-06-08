@@ -259,4 +259,48 @@ class VehicleService
             ];
         }
     }
+
+    public function handleArchiveAction(array $ids, string $action)
+    {
+        if ($action === 'archive') {
+            // Soft delete cars
+            $cars = ScsCar::whereIn('id', $ids)->get();
+
+            foreach ($cars as $car) {
+                $car->images()->delete(); // Soft delete related images
+                $car->delete(); // Soft delete the car itself
+            }
+
+            return true;
+        }
+
+        if ($action === 'restore') {
+            // Restore cars
+            $cars = ScsCar::onlyTrashed()->whereIn('id', $ids)->get();
+
+            foreach ($cars as $car) {
+                $car->restore(); // Restore car
+                $car->images()->withTrashed()->restore(); // Restore related images
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public function deleteVehiclesByIds(array $ids): int
+    {
+        // Fetch the vehicles (even if soft deleted)
+        $cars = ScsCar::withTrashed()->whereIn('id', $ids)->get();
+
+        // Delete related images
+        foreach ($cars as $car) {
+            $car->images()->delete(); // or forceDelete() if using SoftDeletes on ScsCarImage
+        }
+
+        // Permanently delete the vehicles
+        return ScsCar::withTrashed()->whereIn('id', $ids)->forceDelete();
+    }
 }

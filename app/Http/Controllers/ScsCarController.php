@@ -174,4 +174,52 @@ class ScsCarController extends Controller
             ], 500);
         }
     }
+
+    public function archiveVehicles(Request $request)
+    {
+        $validated = $request->validate([
+            'vehicle_ids' => 'required|array',
+            'vehicle_ids.*' => 'integer|exists:scs_cars,id',
+            'action' => 'required|string|in:archive,restore',
+        ]);
+
+        $result = $this->vehicleService->handleArchiveAction($validated['vehicle_ids'], $validated['action']);
+
+        return response()->json([
+            'success' => true,
+            'message' => $validated['action'] === 'archive'
+                ? 'Vehicles archived successfully.'
+                : 'Vehicles restored successfully.',
+            'data' => $result
+        ]);
+    }
+
+    public function getArchivedVehicles()
+    {
+        $archived = ScsCar::onlyTrashed()
+            ->with('images') // Include images if needed
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'vehicles' => $archived
+        ]);
+    }
+
+    public function deleteVehicles(Request $request)
+{
+    $validated = $request->validate([
+        'vehicle_ids' => 'required|array',
+        'vehicle_ids.*' => 'integer|exists:scs_cars,id'
+    ]);
+
+    $deletedCount = $this->vehicleService->deleteVehiclesByIds($validated['vehicle_ids']);
+
+    return response()->json([
+        'success' => true,
+        'message' => "$deletedCount vehicle(s) permanently deleted."
+    ]);
+}
+
 }
