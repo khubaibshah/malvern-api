@@ -295,9 +295,15 @@ class VehicleService
         // Fetch the vehicles (even if soft deleted)
         $cars = ScsCar::withTrashed()->whereIn('id', $ids)->get();
 
-        // Delete related images
         foreach ($cars as $car) {
-            $car->images()->delete(); // or forceDelete() if using SoftDeletes on ScsCarImage
+            // Delete related images from S3
+            if (!empty($car->registration)) {
+                $folder = "car_images/{$car->registration}";
+                $this->awsS3->deleteFolder($folder); // <- Deletes all images in the folder
+            }
+
+            // Delete related database image records
+            $car->images()->delete(); // or forceDelete() if applicable
         }
 
         // Permanently delete the vehicles

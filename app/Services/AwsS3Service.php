@@ -39,7 +39,14 @@ class AwsS3Service
     {
         return Storage::disk($disk)->files($directory);
     }
+    public function deleteFolder(string $folder): bool
+    {
+        $files = Storage::disk('s3')->files($folder);
 
+        if (empty($files)) {
+            return true; // Nothing to delete
+        }
 
-   
+        return Storage::disk('s3')->delete($files);
+    }
 }
