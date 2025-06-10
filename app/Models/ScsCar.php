@@ -15,7 +15,7 @@ class ScsCar extends Model
     protected $fillable = [
         'make', 'model', 'year', 'vrm', 'reg_date', 'registration_date','man_year',
         'variant', 'price', 'plus_vat', 'vat_qualifying', 'was_price', 'trade_price',
-        'trade_text', 'price_above_40k', 'mileage', 'engine_cc', 'fuel_type',
+        'trade_text', 'price_above_40k', 'mileage', 'engine_size', 'fuel_type',
         'body_style', 'colour', 'doors', 'gearbox', 'keys', 'veh_type', 'description', 'registration', 'deleted_at'
     ];
     
