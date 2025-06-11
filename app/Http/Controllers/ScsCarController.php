@@ -90,18 +90,21 @@ class ScsCarController extends Controller
     //for front end
     // public function advancedFilters(): JsonResponse {}
 
-    public function setFeaturedVehicled(Request $request): JsonResponse
-    {
-        $vehicleId = $request->input('id');
+   public function setFeaturedVehicled(Request $request): JsonResponse
+{
+    $vehicleId = $request->input('id');
 
-        // Reset all vehicles
-        ScsCar::where('featured', 1)->update(['featured' => 0]);
+    $car = ScsCar::find($vehicleId);
 
-        // Set the new featured one
-        ScsCar::where('id', $vehicleId)->update(['featured' => 1]);
-
-        return response()->json(['message' => 'Featured vehicle updated.']);
+    if (!$car) {
+        return response()->json(['error' => 'Vehicle not found'], 404);
     }
+
+    $car->featured = $car->featured ? 0 : 1;
+    $car->save();
+
+    return response()->json(['message' => 'Featured vehicle updated.']);
+}
 
 
 
