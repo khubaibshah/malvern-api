@@ -41,3 +41,5 @@ Route::get('/archived-vehicles', [ScsCarController::class, 'getArchivedVehicles'
 
 Route::post('/delete-vehicles', [ScsCarController::class, 'deleteVehicles']);
 
+//hpi report parser
+Route::post('/hpi-report', [HpiReportController::class, 'hpiReport']);
