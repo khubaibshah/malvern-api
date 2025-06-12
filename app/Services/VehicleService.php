@@ -40,7 +40,8 @@ class VehicleService
                 'registration_date' => 'nullable|date',
                 'gearbox' => 'nullable|string|max:255',
                 'keys' => 'nullable|string|max:255',
-                'engine_size' => 'nullable|integer|min:0' // <- Added
+                'engine_size' => 'nullable|integer|min:0', // <- Added
+                'deleted_at' => 'nullable|date'
             ]);
 
             if ($validator->fails()) {
@@ -71,7 +72,8 @@ class VehicleService
                 'keys',
                 'veh_type',
                 'engine_size',
-                'description'
+                'description',
+                'deleted_at'
             ]));
 
             $mainImageIndex = $request->input('main_image_index', 0);
@@ -103,7 +105,7 @@ class VehicleService
 
     public function getVehicleWithImages(int $vehicleId): array
     {
-        $vehicle = ScsCar::find($vehicleId);
+        $vehicle = ScsCar::withTrashed()->find($vehicleId);
 
         if (!$vehicle) {
             return ['error' => 'Vehicle not found', 'status' => 404];
@@ -123,7 +125,7 @@ class VehicleService
     public function getAll(): array
     {
         try {
-            $vehicles = ScsCar::all();
+            $vehicles = ScsCar::withTrashed()->get();
 
             $carsWithImages = $vehicles->map(function ($car) {
                 $folder = "car_images/{$car->registration}";
@@ -190,7 +192,8 @@ class VehicleService
                 'registration_date' => 'nullable|date',
                 'gearbox' => 'nullable|string|max:255',
                 'keys' => 'nullable|integer|max:255',
-                'engine_size' => 'nullable|integer|min:0' // ✅ Added
+                'engine_size' => 'nullable|integer|min:0',
+                'deleted_at' => 'nullable|date'
             ]);
 
             if ($validator->fails()) {
@@ -221,7 +224,8 @@ class VehicleService
                 'gearbox',
                 'keys',
                 'registration_date',
-                'engine_size' // ✅ Added
+                'engine_size',
+                'deleted_at'
             ]));
 
             // Replace images if provided

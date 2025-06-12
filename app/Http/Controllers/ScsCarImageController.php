@@ -15,33 +15,33 @@ class ScsCarImageController extends Controller
      * Store uploaded images for a car in S3 and save URLs to DB.
      */
     public function store(Request $request, $carId)
-{
-    $validator = Validator::make($request->all(), [
-        'car_images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'car_images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $car = ScsCar::find($carId);
+        if (!$car) {
+            return response()->json(['message' => 'Car not found'], 404);
+        }
+
+        $uploadedPaths = [];
+
+        foreach ($request->file('car_images') as $image) {
+            $path = $image->store("car_images/{$carId}", 's3'); // uploads to S3
+            $url = Storage::disk('s3')->url($path);             // get public or signed URL
+            $uploadedPaths[] = $url;
+        }
+
+        return response()->json([
+            'message' => 'Images uploaded to S3 successfully',
+            'files' => $uploadedPaths
+        ], 201);
     }
-
-    $car = ScsCar::find($carId);
-    if (!$car) {
-        return response()->json(['message' => 'Car not found'], 404);
-    }
-
-    $uploadedPaths = [];
-
-    foreach ($request->file('car_images') as $image) {
-        $path = $image->store("car_images/{$carId}", 's3'); // uploads to S3
-        $url = Storage::disk('s3')->url($path);             // get public or signed URL
-        $uploadedPaths[] = $url;
-    }
-
-    return response()->json([
-        'message' => 'Images uploaded to S3 successfully',
-        'files' => $uploadedPaths
-    ], 201);
-}
 
 
     /**
