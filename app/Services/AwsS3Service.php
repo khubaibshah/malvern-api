@@ -21,9 +21,12 @@ class AwsS3Service
     }
 
     public function getFileUrl(string $path, string $disk = 's3'): string
-    {
-        return Storage::disk($disk)->url($path);
-    }
+{
+    $cdnBaseUrl = config('filesystems.cdn_url', env('AWS_CLOUDFRONT_URL'));
+
+    return rtrim($cdnBaseUrl, '/') . '/' . ltrim($path, '/');
+}
+
 
     public function deleteFile(string $path, string $disk = 's3'): bool
     {
