@@ -21,11 +21,11 @@ class AwsS3Service
     }
 
     public function getFileUrl(string $path, string $disk = 's3'): string
-{
-    $cdnBaseUrl = config('filesystems.cdn_url', env('AWS_CLOUDFRONT_URL'));
+    {
+        $cdnBaseUrl = config('filesystems.cdn_url', env('AWS_CLOUDFRONT_URL'));
 
-    return rtrim($cdnBaseUrl, '/') . '/' . ltrim($path, '/');
-}
+        return rtrim($cdnBaseUrl, '/') . '/' . ltrim($path, '/');
+    }
 
 
     public function deleteFile(string $path, string $disk = 's3'): bool
