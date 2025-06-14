@@ -178,21 +178,6 @@ class VehicleService
                 'model' => 'required|string|max:255',
                 'year' => 'required|integer|min:1900|max:' . date('Y'),
                 'registration' => 'required|string|max:255',
-                'variant' => 'nullable|string|max:255',
-                'price' => 'required|numeric',
-                'mileage' => 'required|integer',
-                'fuel_type' => 'required|string|max:255',
-                'colour' => 'required|string|max:255',
-                'doors' => 'nullable|integer|min:0|max:10',
-                'veh_type' => 'required|string|max:255',
-                'description' => 'required|string',
-                'car_images' => 'nullable|array',
-                'car_images.*' => 'string',
-                'main_image' => 'nullable|string',
-                'registration_date' => 'nullable|date',
-                'gearbox' => 'nullable|string|max:255',
-                'keys' => 'nullable|integer|max:255',
-                'engine_size' => 'nullable|integer|min:0',
                 'deleted_at' => 'nullable|date'
             ]);
 
@@ -200,7 +185,7 @@ class VehicleService
                 return ['errors' => $validator->errors(), 'status' => 422];
             }
 
-            $car = ScsCar::find($vehicleId);
+            $car = ScsCar::withTrashed()->find($vehicleId);
 
             if (!$car) {
                 return ['error' => 'Vehicle not found', 'status' => 404];
@@ -230,7 +215,7 @@ class VehicleService
 
             // Replace images if provided
             if ($request->has('car_images')) {
-                ScsCarImage::where('scs_car_id', $car->id)->delete();
+                ScsCarImage::withTrashed()->where('scs_car_id', $car->id)->delete();
 
                 $images = $request->input('car_images', []);
                 $mainImageKey = $request->input('main_image');
