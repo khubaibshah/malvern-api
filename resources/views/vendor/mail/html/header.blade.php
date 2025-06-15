@@ -4,7 +4,7 @@
         <a href="{{ $url }}" style="display: inline-block;">
             @if (trim($slot) === 'Laravel')
             <!-- <img src="https://laravel.com/img/notification-logo.png" class="logo" alt="Laravel Logo"> -->
-            <img src="https://scs.netlify.app/assets/newlogo-DR-U47z6.png" 
+            <img src="https://scsltd.netlify.app/assets/newlogo1-Di2KJLkH.png" 
             alt="SCS Car Sales Ltd" 
             class="logo" 
             style="height: 122px;
