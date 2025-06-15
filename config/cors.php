@@ -24,7 +24,7 @@ return [
     'http://localhost:4002',
      'http://localhost:5174',
      'https://malvernadmin.netlify.app', 
-    'https://malvernautos.netlify.app'],
+    'https://scsltd.netlify.app'],
 
     'allowed_origins_patterns' => [],
 
