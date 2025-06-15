@@ -31,3 +31,4 @@ Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
 Route::post('/advanced-filters', [ScsCarController::class, 'advancedFilters']);
 Route::post('/lead', [ScsCarController::class, 'lead']);
+Route::post('/schedule-test-drive', [ScsCarController::class, 'testDrive']);

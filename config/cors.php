@@ -22,8 +22,8 @@ return [
     'allowed_origins' => ['http://localhost:5173',
     'http://localhost:*',
     'http://localhost:4002',
-     'http://localhost:5174',
-     'https://malvernadmin.netlify.app', 
+    'http://localhost:5174',
+    'https://malvernadmin.netlify.app', 
     'https://scsltd.netlify.app'],
 
     'allowed_origins_patterns' => [],

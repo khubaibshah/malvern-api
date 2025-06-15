@@ -90,21 +90,21 @@ class ScsCarController extends Controller
     //for front end
     // public function advancedFilters(): JsonResponse {}
 
-   public function setFeaturedVehicled(Request $request): JsonResponse
-{
-    $vehicleId = $request->input('id');
+    public function setFeaturedVehicled(Request $request): JsonResponse
+    {
+        $vehicleId = $request->input('id');
 
-    $car = ScsCar::find($vehicleId);
+        $car = ScsCar::find($vehicleId);
 
-    if (!$car) {
-        return response()->json(['error' => 'Vehicle not found'], 404);
+        if (!$car) {
+            return response()->json(['error' => 'Vehicle not found'], 404);
+        }
+
+        $car->featured = $car->featured ? 0 : 1;
+        $car->save();
+
+        return response()->json(['message' => 'Featured vehicle updated.']);
     }
-
-    $car->featured = $car->featured ? 0 : 1;
-    $car->save();
-
-    return response()->json(['message' => 'Featured vehicle updated.']);
-}
 
 
 
@@ -153,31 +153,6 @@ class ScsCarController extends Controller
         return response()->json(['message' => $result['message']], $result['status']);
     }
 
-    public function lead(Request $request, LeadService $leadService)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'message' => 'required|string',
-            'vehicle_id' => 'nullable|integer|exists:scs_cars,id',
-        ]);
-
-        try {
-            $lead = $leadService->createLead($validated);
-
-            return response()->json([
-                'message' => 'Lead submitted successfully.',
-                'lead' => $lead
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to submit lead.',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
     public function archiveVehicles(Request $request)
     {
         $validated = $request->validate([
@@ -211,18 +186,66 @@ class ScsCarController extends Controller
     }
 
     public function deleteVehicles(Request $request)
-{
-    $validated = $request->validate([
-        'vehicle_ids' => 'required|array',
-        'vehicle_ids.*' => 'integer|exists:scs_cars,id'
-    ]);
+    {
+        $validated = $request->validate([
+            'vehicle_ids' => 'required|array',
+            'vehicle_ids.*' => 'integer|exists:scs_cars,id'
+        ]);
 
-    $deletedCount = $this->vehicleService->deleteVehiclesByIds($validated['vehicle_ids']);
+        $deletedCount = $this->vehicleService->deleteVehiclesByIds($validated['vehicle_ids']);
 
-    return response()->json([
-        'success' => true,
-        'message' => "$deletedCount vehicle(s) permanently deleted."
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'message' => "$deletedCount vehicle(s) permanently deleted."
+        ]);
+    }
 
+    public function lead(Request $request, LeadService $leadService)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'message' => 'required|string',
+            'vehicle_id' => 'nullable|integer|exists:scs_cars,id',
+        ]);
+
+        try {
+            $lead = $leadService->createLead($validated);
+
+            return response()->json([
+                'message' => 'Lead submitted successfully.',
+                'lead' => $lead
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to submit lead.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function testDrive(Request $request, LeadService $leadService)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'vehicle_id' => 'required|integer|exists:scs_cars,id',
+        ]);
+
+        try {
+            $testDrive = $leadService->scheduleTestDrive($validated);
+
+            return response()->json([
+                'message' => 'Test drive scheduled successfully.',
+                'test_drive' => $testDrive
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to schedule test drive.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -126,5 +126,8 @@ return [
 
     // Custom lead email recipient
     'leads_to' => env('MAIL_LEADS_TO', 'khubaib_12@hotmail.com'),
+
+    // Custom test drive email recipient
+    'test_drives_to' => env('MAIL_LEADS_TO', 'khubaib_12@hotmail.com'),
 ];
 
