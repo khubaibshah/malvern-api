@@ -8,7 +8,7 @@
 @endif
 
 **Vehicle:** {{ $lead->vehicle->make ?? 'N/A' }} {{ $lead->vehicle->model ?? '' }}  
-**Vehicle ID:** {{ $lead->vehicle->id }}
+**Vehicle ID:** {{ $lead->vehicle->registration }}
 
 ---
 
