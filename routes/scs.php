@@ -1,14 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\VehicleDetailsController;
 use App\Http\Controllers\DVSAVehicleController;
-use App\Http\Controllers\InfoController;
-use App\Http\Controllers\CustomerBookingController;
-use App\Http\Controllers\JobCategoryController;
-use App\Http\Controllers\JobSubCategoryController;
+
 
 // Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
 Route::post('/ves-auth', [VehicleDetailsController::class, 'authenticateVes']);
