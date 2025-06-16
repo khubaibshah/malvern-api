@@ -30,10 +30,10 @@ Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
 Route::post('/advanced-filters', [ScsCarController::class, 'advancedFilters']);
 
-#emails
+# emails
 Route::post('/lead', [EmailController::class, 'lead']);
 Route::post('/schedule-test-drive', [EmailController::class, 'testDrive']);
-Route::post('/sell-your-car', [EmailController::class, 'sellYourCar']);
+Route::post('/sell-your-car', [EmailController::class, 'customerVehicleSale']);
 
 
 #dvsa endpoints

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Lead extends Model
+class TestDriveRequest extends Model
 {
     use HasFactory;
 
@@ -13,14 +13,9 @@ class Lead extends Model
         'name',
         'email',
         'phone',
-        'message',
         'vehicle_id',
-        'source',
     ];
 
-    /**
-     * Relationship to the vehicle (if applicable)
-     */
     public function vehicle()
     {
         return $this->belongsTo(ScsCar::class, 'vehicle_id');

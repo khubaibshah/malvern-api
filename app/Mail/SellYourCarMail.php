@@ -5,14 +5,15 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\CustomerSaleRequest;
 
 class SellYourCarMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $data;
+    public CustomerSaleRequest $data;
 
-    public function __construct(array $data)
+    public function __construct(CustomerSaleRequest $data)
     {
         $this->data = $data;
     }
@@ -24,4 +25,5 @@ class SellYourCarMail extends Mailable
                     ->with(['data' => $this->data]);
     }
 }
+
 

@@ -5,24 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Lead extends Model
+class CustomerSaleRequest extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'full_name',
         'email',
+        'postcode',
         'phone',
-        'message',
         'vehicle_id',
-        'source',
     ];
 
-    /**
-     * Relationship to the vehicle (if applicable)
-     */
     public function vehicle()
     {
-        return $this->belongsTo(ScsCar::class, 'vehicle_id');
+        return $this->belongsTo(CustomerSaleRequestVehicle::class, 'vehicle_id');
     }
 }

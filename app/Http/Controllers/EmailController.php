@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SellYourCarMail;
+use App\Models\Lead;
 use App\Services\LeadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -10,6 +11,16 @@ use Illuminate\Support\Facades\Mail;
 class EmailController extends Controller
 {
 
+    public function __construct(protected LeadService $leadService)
+    {
+    }
+
+    /**
+     * Handle a lead enquiry submission.
+     * @param Request $request
+     * @param LeadService $leadService
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function lead(Request $request, LeadService $leadService)
     {
         $validated = $request->validate([
@@ -21,20 +32,26 @@ class EmailController extends Controller
         ]);
 
         try {
-            $lead = $leadService->createLead($validated);
+            $lead = $this->leadService->createLead($validated);
 
             return response()->json([
-                'message' => 'Lead submitted successfully.',
+                'message' => 'Enquiry submitted successfully.',
                 'lead' => $lead
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to submit lead.',
+                'error' => 'Failed to submit Enquiry.',
                 'message' => $e->getMessage()
             ], 500);
         }
     }
 
+    /**
+     * Handle a test drive request submission.
+     * @param Request $request 
+     * @param LeadService $leadService
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function testDrive(Request $request, LeadService $leadService)
     {
         $validated = $request->validate([
@@ -45,7 +62,7 @@ class EmailController extends Controller
         ]);
 
         try {
-            $testDrive = $leadService->scheduleTestDrive($validated);
+            $testDrive = $this->leadService->scheduleTestDrive($validated);
 
             return response()->json([
                 'message' => 'Test drive scheduled successfully.',
@@ -59,7 +76,12 @@ class EmailController extends Controller
         }
     }
 
-    public function sellYourCar(Request $request)
+    /**
+     *  Handle a customer vehicle sale request.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function customerVehicleSale(Request $request)
     {
         $validated = $request->validate([
             'fullName'     => 'required|string|max:255',
@@ -69,10 +91,18 @@ class EmailController extends Controller
             'registration' => 'required|string|max:10',
             'vehicle'      => 'required|array',
         ]);
+         try {
+            $this->leadService->handleCustomerSaleRequest($validated);
 
-        // Send the email to your sales team
-        Mail::to(config('mail.sell_car_to'))->send(new SellYourCarMail($validated));
-
-        return response()->json(['message' => 'Sell request submitted successfully.']);
+            return response()->json([
+                'message' => 'Sell your car enquiry successful.',
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to submit sell your car enquiry.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+      
     }
 }
