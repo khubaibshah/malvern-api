@@ -72,6 +72,7 @@ class LeadService
             'odometer_unit'     => $data['vehicle']['odometerUnit'] ?? null,
             'first_used_date'   => $data['vehicle']['firstUsedDate'] ?? null,
             'registration_date' => $data['vehicle']['registrationDate'] ?? null,
+            'part_ex'           => $data['vehicle']['partEx'] ?? null,
         ]);
 
         $saleRequest = CustomerSaleRequest::create([

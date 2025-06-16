@@ -10,7 +10,7 @@ class CustomerSaleRequestVehicle extends Model
     use HasFactory;
 
     protected $table = 'customer_sale_request_vehicles';
-    
+
     protected $fillable = [
         'registration',
         'make',
@@ -22,6 +22,7 @@ class CustomerSaleRequestVehicle extends Model
         'odometer_unit',
         'first_used_date',
         'registration_date',
+        'part_ex',
     ];
 
     public function saleRequest()

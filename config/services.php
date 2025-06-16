@@ -36,4 +36,11 @@ return [
         'client_secret' => env('API_CLIENT_SECRET'),
         'scope' => env('SCOPE'),
     ],
+    'google' => [
+        'api_key' => env('GOOGLE_API_KEY'),
+        'place_id' => env('GOOGLE_PLACE_ID'),
+    ],
+//     'mail' => [
+//         'leads_to' => env('MAIL_LEADS_TO', '
+
 ];

@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VehicleDetailsController;
 use App\Http\Controllers\DVSAVehicleController;
-
+use Illuminate\Support\Facades\Http;
 
 // Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
 Route::post('/ves-auth', [VehicleDetailsController::class, 'authenticateVes']);
@@ -31,4 +31,13 @@ Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::cla
 Route::get('/dvsa-vehicle-details-scs/{registrationNumber}', [DVSAVehicleController::class, 'getMOTTestsFiltered']);
 
 
+#google api
+// Route::get('/google-api', function () {
+//     $response = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
+//         // 'address' => '1600 Amphitheatre Parkway, Mountain View, CA',
+//         'placeid' => config('services.google.place_id'),
+//         'key' => config('services.google.api_key'),
+//     ]); 
+//     return response()->json($response->json());
+// });
 
