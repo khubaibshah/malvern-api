@@ -200,52 +200,5 @@ class ScsCarController extends Controller
         ]);
     }
 
-    public function lead(Request $request, LeadService $leadService)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'message' => 'required|string',
-            'vehicle_id' => 'nullable|integer|exists:scs_cars,id',
-        ]);
 
-        try {
-            $lead = $leadService->createLead($validated);
-
-            return response()->json([
-                'message' => 'Lead submitted successfully.',
-                'lead' => $lead
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to submit lead.',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function testDrive(Request $request, LeadService $leadService)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'vehicle_id' => 'required|integer|exists:scs_cars,id',
-        ]);
-
-        try {
-            $testDrive = $leadService->scheduleTestDrive($validated);
-
-            return response()->json([
-                'message' => 'Test drive scheduled successfully.',
-                'test_drive' => $testDrive
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to schedule test drive.',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 }

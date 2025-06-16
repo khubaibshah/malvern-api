@@ -129,5 +129,8 @@ return [
 
     // Custom test drive email recipient
     'test_drives_to' => env('MAIL_LEADS_TO', 'khubaib_12@hotmail.com'),
+
+    // Custom sell your car email recipient
+    'sell_car_to' => env('MAIL_LEADS_TO', 'khubaib_12@hotmail.com'),
 ];
 

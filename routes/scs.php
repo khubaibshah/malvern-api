@@ -11,7 +11,6 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobSubCategoryController;
 
 // Route::post('/vehicle-details', [VehicleDetailsController::class, 'getVehicleDetails']);
-Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::class, 'VesVehicleDetails']);
 Route::post('/ves-auth', [VehicleDetailsController::class, 'authenticateVes']);
 Route::get('/vehicle-details', [VehicleController::class, 'index']);
 Route::post('/vehicle-details', [VehicleController::class, 'store']);
@@ -30,5 +29,16 @@ Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCate
 Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
 Route::post('/advanced-filters', [ScsCarController::class, 'advancedFilters']);
-Route::post('/lead', [ScsCarController::class, 'lead']);
-Route::post('/schedule-test-drive', [ScsCarController::class, 'testDrive']);
+
+#emails
+Route::post('/lead', [EmailController::class, 'lead']);
+Route::post('/schedule-test-drive', [EmailController::class, 'testDrive']);
+Route::post('/sell-your-car', [EmailController::class, 'sellYourCar']);
+
+
+#dvsa endpoints
+Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::class, 'VesVehicleDetails']);
+Route::get('/dvsa-vehicle-details-scs/{registrationNumber}', [DVSAVehicleController::class, 'getMOTTestsFiltered']);
+
+
+
