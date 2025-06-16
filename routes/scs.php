@@ -17,11 +17,6 @@ Route::post('/vehicle-details', [VehicleController::class, 'store']);
 Route::get('/vehicle-details/{registrationNumber}', [VehicleController::class, 'show']);
 Route::get('/dvsa-vehicle-details/{registrationNumber}', [DVSAVehicleController::class, 'getMOTTests']);
 Route::get('/vehicle-list', [ScsCarImageController::class, 'getAllCars']);
-Route::get('/customer-booking', [CustomerBookingController::class, 'index']);
-Route::post('/customer-booking', [CustomerBookingController::class, 'store']);
-Route::get('/customer-job-category', [JobCategoryController::class, 'index']);
-Route::get('/customer-job-sub-categories', [JobSubCategoryController::class, 'index']);
-Route::get('/customer-allCategories', [JobCategoryController::class, 'getJobCategoriesWithSubcategories']);
 
 
 
