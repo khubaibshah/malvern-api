@@ -10,12 +10,13 @@ use Illuminate\Http\JsonResponse;
 
 use App\Services\VehicleService;
 use Aws\S3\S3Client;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ScsCarController extends Controller
 {
-    public function __construct(protected VehicleService $vehicleService) {}
+    public function __construct(protected VehicleService $vehicleService, protected  AwsS3Service $s3) {}
 
     public function store(Request $request): JsonResponse
     {
@@ -201,4 +202,41 @@ class ScsCarController extends Controller
     }
 
 
+    public function advancedFilters(Request $request): JsonResponse
+    {
+        $query = ScsCar::query();
+
+        if ($request->filled('price_min') && $request->filled('price_max')) {
+            $query->whereBetween('price', [$request->price_min, $request->price_max]);
+        }
+
+        if ($request->filled('mileage')) {
+            $query->where('mileage', '<=', $request->mileage);
+        }
+
+        if ($request->filled('types')) {
+            $query->whereIn('veh_type', explode(',', $request->types));
+        }
+
+        if ($request->filled('color')) {
+            $query->whereRaw('LOWER(colour) = ?', [strtolower($request->color)]);
+        }
+
+        $cars = $query->get();
+
+        foreach ($cars as $car) {
+            $folder = "car_images/{$car->registration}";
+
+            // Get all files in this car's folder from S3
+            $imagePaths = $this->s3->listFiles($folder);
+
+            // Map them into full CDN URLs
+            $imageUrls = array_map(fn($path) => $this->s3->getFileUrl($path), $imagePaths);
+
+            // Assign back to the car
+            $car->images = $imageUrls;
+        }
+
+        return response()->json(['cars' => $cars]);
+    }
 }

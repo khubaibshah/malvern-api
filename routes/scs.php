@@ -18,7 +18,7 @@ Route::get('/vehicle-list', [ScsCarImageController::class, 'getAllCars']);
 //get vehicles to display 
 Route::get('/get-vehicle-by-id/{vehicleId}', [ScsCarController::class, 'get']);
 Route::get('/get-all-vehicles', [ScsCarController::class, 'getAllVehiclesWithImages']);
-Route::post('/advanced-filters', [ScsCarController::class, 'advancedFilters']);
+Route::get('/advanced-filters', [ScsCarController::class, 'advancedFilters']);
 
 # emails
 Route::post('/lead', [EmailController::class, 'lead']);
