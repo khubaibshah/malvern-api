@@ -215,7 +215,7 @@ class ScsCarController extends Controller
         }
 
         if ($request->filled('types')) {
-            $query->whereIn('veh_type', explode(',', $request->types));
+            $query->whereIn('body_style', explode(',', $request->types));
         }
 
         if ($request->filled('color')) {
