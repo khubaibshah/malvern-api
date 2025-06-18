@@ -15,6 +15,7 @@
 
 ## 🚘 Vehicle Information
 
+- **Part Ex?:** {{ $data->vehicle->part_ex ? 'Yes' : 'No' }}
 - **Make:** {{ $data->vehicle->make ?? 'N/A' }}
 - **Model:** {{ $data->vehicle->model ?? 'N/A' }}
 - **Colour:** {{ $data->vehicle->primary_colour ?? 'N/A' }}

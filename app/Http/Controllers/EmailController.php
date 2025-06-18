@@ -90,6 +90,7 @@ class EmailController extends Controller
             'phone'        => 'nullable|string|max:20',
             'registration' => 'required|string|max:10',
             'vehicle'      => 'required|array',
+            'partEx'      => 'nullable|boolean',
         ]);
          try {
             $this->leadService->handleCustomerSaleRequest($validated);

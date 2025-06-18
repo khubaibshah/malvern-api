@@ -36,7 +36,7 @@ class LeadService
      * Schedule a test drive and send email notification.
      * @param array $data
      * @return void
-     */ 
+     */
     public function scheduleTestDrive(array $data): void
     {
         $lead = Lead::create([
@@ -58,7 +58,7 @@ class LeadService
      * Handle customer sale request and send email notification.
      * @param array $data
      * @return void
-     */ 
+     */
     public function handleCustomerSaleRequest(array $data): void
     {
         $vehicle = CustomerSaleRequestVehicle::create([
@@ -72,8 +72,9 @@ class LeadService
             'odometer_unit'     => $data['vehicle']['odometerUnit'] ?? null,
             'first_used_date'   => $data['vehicle']['firstUsedDate'] ?? null,
             'registration_date' => $data['vehicle']['registrationDate'] ?? null,
-            'part_ex'           => $data['vehicle']['partEx'] ?? null,
+            'part_ex'           => $data['partEx'] ?? false, 
         ]);
+
 
         $saleRequest = CustomerSaleRequest::create([
             'full_name'  => $data['fullName'],
