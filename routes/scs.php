@@ -31,6 +31,11 @@ Route::get('/get-vehicle-details/{registration}', [VehicleDetailsController::cla
 Route::get('/dvsa-vehicle-details-scs/{registrationNumber}', [DVSAVehicleController::class, 'getMOTTestsFiltered']);
 
 
+
+#autotrader endpoints
+Route::get('/vehicleList', [AutoTraderVehicleList::class, 'autotraderVehicleList']);
+Route::get('/vehicle/{vehicleId}', [AutoTraderVehicleList::class, 'autotraderVehicle']);
+
 #google api
 // Route::get('/google-api', function () {
 //     $response = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [

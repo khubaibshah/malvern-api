@@ -40,6 +40,11 @@ return [
         'api_key' => env('GOOGLE_API_KEY'),
         'place_id' => env('GOOGLE_PLACE_ID'),
     ],
+    'autotrader' => [
+        'key' => env('AUTOTRADER_KEY'),
+        'secret' => env('AUTOTRADER_SECRET'),
+    ],
+
 //     'mail' => [
 //         'leads_to' => env('MAIL_LEADS_TO', '
 
