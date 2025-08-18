@@ -4,27 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\ScsCar;
 use App\Services\AwsS3Service;
-use App\Services\LeadService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-
-use App\Services\VehicleService;
+use App\Services\ScsVehicleService;
 use Aws\S3\S3Client;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
-class ScsCarController extends Controller
+/**
+ * ScsVehicleController handles vehicle-related operations.
+ */
+
+class ScsVehicleController extends Controller
 {
-    public function __construct(protected VehicleService $vehicleService, protected  AwsS3Service $s3) {}
+    public function __construct(protected ScsVehicleService $vehicleService, protected  AwsS3Service $s3) {}
 
     public function store(Request $request): JsonResponse
     {
-        Log::info('ScsCarController@store hit');
-        Log::debug('VehicleService::__construct hit test');
 
         $result = $this->vehicleService->createVehicleWithImages($request);
-        Log::debug('VehicleService result', $result);
 
         if (isset($result['errors'])) {
             return response()->json(['errors' => $result['errors']], $result['status']);
@@ -44,7 +41,6 @@ class ScsCarController extends Controller
         ], $result['status'] ?? 500);
     }
 
-
     //update vehicle data and images
     public function put(Request $request, int $id): JsonResponse
     {
@@ -62,7 +58,7 @@ class ScsCarController extends Controller
     }
 
     //get vehicle data and images from s3 using vehicle id one vehicle 
-    public function get($vehicleId): JsonResponse
+    public function getById($vehicleId): JsonResponse
     {
         $result = $this->vehicleService->getVehicleWithImages($vehicleId);
 
@@ -88,8 +84,16 @@ class ScsCarController extends Controller
         return response()->json(['cars' => $result['cars']], $result['status']);
     }
 
-    //for front end
-    // public function advancedFilters(): JsonResponse {}
+    public function getVehicles(): JsonResponse
+    {
+        $result = $this->vehicleService->getAllVehicles();
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => $result['error']], $result['status']);
+        }
+
+        return response()->json(['cars' => $result['cars']], $result['status']);
+    }
 
     public function setFeaturedVehicled(Request $request): JsonResponse
     {
@@ -106,8 +110,6 @@ class ScsCarController extends Controller
 
         return response()->json(['message' => 'Featured vehicle updated.']);
     }
-
-
 
     public function generatePresignedUploadUrl(Request $request)
     {
@@ -139,7 +141,6 @@ class ScsCarController extends Controller
             'key' => $key,
         ]);
     }
-
 
     public function deleteS3Image(Request $request): JsonResponse
     {
@@ -200,7 +201,6 @@ class ScsCarController extends Controller
             'message' => "$deletedCount vehicle(s) permanently deleted."
         ]);
     }
-
 
     public function advancedFilters(Request $request): JsonResponse
     {

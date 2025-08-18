@@ -9,12 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class VehicleService
+class ScsVehicleService
 {
-    public function __construct(protected AwsS3Service $awsS3)
-    {
-        Log::info('VehicleService constructor called');
-    }
+    public function __construct(protected AwsS3Service $awsS3){}
 
     public function createVehicleWithImages(Request $request): array
     {
@@ -103,29 +100,72 @@ class VehicleService
         }
     }
 
-    public function getVehicleWithImages(int $vehicleId): array
-    {
-        $vehicle = ScsCar::withTrashed()->find($vehicleId);
+public function getVehicleWithImages(int $vehicleId): array
+{
+    $vehicle = ScsCar::withTrashed()->find($vehicleId);
 
-        if (!$vehicle) {
-            return ['error' => 'Vehicle not found', 'status' => 404];
-        }
-        $folder = "car_images/{$vehicle->registration}";
-        $imagePaths = $this->awsS3->listFiles($folder);
-
-        // Generate public URLs for each image
-        $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $imagePaths);
-
-        // Add image URLs to the response
-        $vehicle->images = $imageUrls;
-
-        return ['message' => 'Vehicle updated successfully', 'car' => $vehicle, 'status' => 200];
+    if (!$vehicle) {
+        return ['error' => 'Vehicle not found', 'status' => 404];
     }
+
+    $folder = "car_images/{$vehicle->registration}";
+
+    // Step 1: Check if S3 images exist
+    $s3Paths = $this->awsS3->listFiles($folder);
+
+    if (!empty($s3Paths)) {
+        // ✅ Return only S3 images
+        $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $s3Paths);
+    } else {
+        // ✅ No S3 images — fallback to DB (AutoTrader)
+        $dbUrls = ScsCarImage::where('scs_car_id', $vehicle->id)
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn($img) => base64_decode($img->car_image))
+            ->toArray();
+
+        $imageUrls = $dbUrls;
+    }
+
+    $vehicle->images = array_values(array_unique($imageUrls));
+
+    return [
+        'message' => 'Vehicle loaded successfully',
+        'car' => $vehicle,
+        'status' => 200
+    ];
+}
+
+
 
     public function getAll(): array
     {
         try {
             $vehicles = ScsCar::withTrashed()->get();
+
+            $carsWithImages = $vehicles->map(function ($car) {
+                $folder = "car_images/{$car->registration}";
+                $imagePaths = $this->awsS3->listFiles($folder);
+                $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $imagePaths);
+
+                $car->images = $imageUrls;
+                return $car;
+            });
+
+            return ['cars' => $carsWithImages, 'status' => 200];
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch all vehicles', ['error' => $e->getMessage()]);
+            return [
+                'error' => 'Server error while fetching vehicles.',
+                'status' => 500
+            ];
+        }
+    }
+
+    public function getAllVehicles(): array
+    {
+        try {
+            $vehicles = ScsCar::get();
 
             $carsWithImages = $vehicles->map(function ($car) {
                 $folder = "car_images/{$car->registration}";
@@ -166,9 +206,6 @@ class VehicleService
             ? ['success' => true, 'message' => 'Image deleted successfully.', 'status' => 200]
             : ['success' => false, 'message' => 'Failed to delete image from S3.', 'status' => 500];
     }
-
-
-
     //updateVehicleWithImages
     public function updateVehicleWithImages(Request $request, int $vehicleId): array
     {
@@ -191,7 +228,7 @@ class VehicleService
                 return ['error' => 'Vehicle not found', 'status' => 404];
             }
 
-            // ✅ Update vehicle details including engine_size
+            //Update vehicle details including engine_size
             $car->update($request->only([
                 'make',
                 'model',
@@ -277,7 +314,6 @@ class VehicleService
 
         return false;
     }
-
 
     public function deleteVehiclesByIds(array $ids): int
     {

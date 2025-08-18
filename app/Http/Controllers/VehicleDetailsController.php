@@ -9,7 +9,6 @@ class VehicleDetailsController extends Controller
 {
     public function vesVehicleDetails(Request $request)
     {
-        // dd('asdfasdf');
         // Validate the request
         $request->validate([
             'registrationNumber' => 'required|string|max:10', // Adjust the max length according to your needs

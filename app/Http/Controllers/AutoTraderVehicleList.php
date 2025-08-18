@@ -23,10 +23,10 @@ class AutoTraderVehicleList extends Controller
             'data' => $data,
         ]);
     }
+    
     public function autotraderVehicle(Request $request)
     {
         $vehicleId = $request->route('vehicleId');
-        // dd($vehicleId);
         $data = $this->autoTraderService->getVehicle(vehicleId : $vehicleId);
 
         return response()->json([
