@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        $schedule->command('cars:sync-autotrader')->everyMinute();
+        // $schedule->command('cars:sync-autotrader')->everyMinute();
         // Runs every day at 12:00 PM
         // $schedule->command('cars:sync-autotrader')->dailyAt('12:00'); 
     }
