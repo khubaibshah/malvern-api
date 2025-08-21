@@ -74,6 +74,7 @@ class SyncAutoTraderVehiclesJob implements ShouldQueue
                         'description' => $advert['description2'] ?? $advert['description'] ?? 'SCS Car Sales Limited is proud to present this vehicle.'
                     ]
                 );
+                Log::info("AutoTrader vehicle synced for : {$scsCar->registration}");
 
                 foreach ($media as $index => $image) {
                     ProcessVehicleImageJob::dispatch($scsCar->id, $image, $index);
