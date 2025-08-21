@@ -35,12 +35,18 @@ class ProcessVehicleImageJob implements ShouldQueue
             Log::info("Running image job for car_id {$this->carId}, index {$this->index}");
 
             $car = ScsCar::find($this->carId);
-            if (!$car) return;
+            if (!$car) {
+                Log::warning("Car not found for image job. Car ID: {$this->carId}");
+                return;
+            }
 
             $imgUrl = str_replace('{resize}', 'w800h600', $this->image['href']);
+            $imageContents = @file_get_contents($imgUrl);
 
-            $imageContents = file_get_contents($imgUrl);
-            if (!$imageContents) return;
+            if (!$imageContents) {
+                Log::error("Failed to download image from: {$imgUrl}");
+                return;
+            }
 
             $tempPath = sys_get_temp_dir() . '/' . Str::random(40) . '.jpg';
             file_put_contents($tempPath, $imageContents);
@@ -66,13 +72,14 @@ class ProcessVehicleImageJob implements ShouldQueue
                 ]
             );
 
-            // Clean up temp file
             unlink($tempPath);
         } catch (\Throwable $e) {
             Log::error('Failed to process vehicle image', [
                 'car_id' => $this->carId,
                 'index' => $this->index,
+                'image_href' => $this->image['href'] ?? 'n/a',
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }
