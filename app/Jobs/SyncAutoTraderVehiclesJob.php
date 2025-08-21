@@ -33,7 +33,7 @@ class SyncAutoTraderVehiclesJob implements ShouldQueue
             return;
         }
 
-        $response = Http::withToken($token)->get($autoTraderService->vehicleListUrl);
+        $response = Http::withToken($token)->get($autoTraderService->getVehicleListUrl());
 
         if (!$response->successful()) {
             Log::error('Failed to fetch AutoTrader list');
@@ -89,4 +89,3 @@ class SyncAutoTraderVehiclesJob implements ShouldQueue
         Log::info('AutoTrader sync completed');
     }
 }
-

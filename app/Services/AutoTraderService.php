@@ -25,6 +25,10 @@ class AutoTraderService
         $this->secret = config('services.autotrader.secret');
     }
 
+    public function getVehicleListUrl(): string
+    {
+        return $this->vehicleListUrl;
+    }
     public function getAuthToken(): ?string
     {
         $cachedToken = Cache::get('autotrader_access_token');
