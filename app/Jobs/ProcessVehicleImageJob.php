@@ -40,7 +40,7 @@ class ProcessVehicleImageJob implements ShouldQueue
                 return;
             }
 
-            $imgUrl = str_replace('{resize}', 'w800h600', $this->image['href']);
+            $imgUrl = str_replace('{resize}', 'w1024h768', $this->image['href']);
             $imageContents = @file_get_contents($imgUrl);
 
             if (!$imageContents) {

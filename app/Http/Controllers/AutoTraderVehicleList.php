@@ -15,12 +15,13 @@ class AutoTraderVehicleList extends Controller
         $this->autoTraderService = $autoTraderService;
     }
 
-    public function autotraderVehicleList()
+    public function autotraderVehicleList(AutoTraderService $autoTraderService)
     {
-        SyncAutoTraderVehiclesJob::dispatch();
+        $vehicles = $autoTraderService->getVehicleList();
 
         return response()->json([
-            'message' => 'AutoTrader vehicle sync job has been dispatched.',
+            'message' => 'Vehicles saved. Image jobs dispatched in background.',
+            'data' => $vehicles,
         ]);
     }
 

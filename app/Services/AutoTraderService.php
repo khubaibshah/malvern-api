@@ -18,11 +18,13 @@ class AutoTraderService
 
     protected string $key;
     protected string $secret;
+    protected AwsS3Service $awsS3;
 
-    public function __construct()
+    public function __construct(AwsS3Service $awsS3)
     {
         $this->key = config('services.autotrader.key');
         $this->secret = config('services.autotrader.secret');
+        $this->awsS3 = $awsS3;
     }
 
     public function getVehicleListUrl(): string
@@ -111,6 +113,14 @@ class AutoTraderService
                 );
 
                 foreach ($media as $index => $image) {
+                    $imgUrl = str_replace('{resize}', 'w1024h768', $image['href']);
+                    $filename = pathinfo($imgUrl, PATHINFO_BASENAME);
+                    $folder = "car_images/{$scsCar->registration}";
+
+                    if ($this->awsS3->fileExists("{$folder}/{$filename}")) {
+                        continue; //Skip dispatch if already exists in S3
+                    }
+
                     ProcessVehicleImageJob::dispatch($scsCar->id, $image, $index);
                 }
 
@@ -158,29 +168,6 @@ class AutoTraderService
                 ->toArray()
         ];
     }
-
-    public function getSyncedCars()
-    {
-        $cars = ScsCar::with(['images' => fn($q) => $q->ordered()])
-            ->latest()
-            ->get()
-            ->map(fn($car) => [
-                'id' => $car->id,
-                'make' => strtoupper($car->make),
-                'model' => strtoupper($car->model),
-                'year' => $car->year,
-                'images' => $car->images->pluck('car_image')->toArray(),
-                // ... other fields
-            ])
-            ->toArray();
-
-        return response()->json([
-            'message' => 'Fetched synced vehicles.',
-            'data' => $cars,
-        ]);
-    }
-
-
 
     public function getVehicle($vehicleId): array
     {
