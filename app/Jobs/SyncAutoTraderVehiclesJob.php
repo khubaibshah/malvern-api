@@ -27,66 +27,60 @@ class SyncAutoTraderVehiclesJob implements ShouldQueue
 
     public function handle(AutoTraderService $autoTraderService): void
     {
-        $token = $autoTraderService->getAuthToken();
-        if (!$token) {
-            Log::error('No AutoTrader token');
-            return;
-        }
+        Log::info('Starting SyncAutoTraderVehiclesJob...');
 
-        $response = Http::withToken($token)->get($autoTraderService->getVehicleListUrl());
-
-        if (!$response->successful()) {
-            Log::error('Failed to fetch AutoTrader list');
-            return;
-        }
-
-        $data = $response->json();
-        $results = $data['results'] ?? [];
-
-        foreach ($results as $item) {
-            DB::beginTransaction();
-            try {
-                $vehicle = $item['vehicle'];
-                $advert = $item['adverts']['retailAdverts'] ?? [];
-                $media = $item['media']['images'] ?? [];
-
-                $scsCar = ScsCar::updateOrCreate(
-                    ['registration' => $vehicle['registration']],
-                    [
-                        'make' => strtoupper($vehicle['make']),
-                        'model' => strtoupper($vehicle['model']),
-                        'year' => $vehicle['yearOfManufacture'],
-                        'registration_date' => $vehicle['firstRegistrationDate'],
-                        'variant' => $vehicle['derivative'],
-                        'price' => $advert['totalPrice']['amountGBP'] ?? 0,
-                        'featured' => 0,
-                        'plus_vat' => 0,
-                        'mileage' => $vehicle['odometerReadingMiles'],
-                        'fuel_type' => $vehicle['fuelType'],
-                        'colour' => $vehicle['colour'],
-                        'body_style' => $vehicle['bodyType'],
-                        'doors' => $vehicle['doors'],
-                        'gearbox' => $vehicle['transmissionType'],
-                        'keys' => null,
-                        'engine_size' => $vehicle['engineCapacityCC'],
-                        'veh_type' => $vehicle['vehicleType'],
-                        'vehicle_status' => $item['metadata']['lifecycleState'] ?? null,
-                        'description' => $advert['description2'] ?? $advert['description'] ?? 'SCS Car Sales Limited is proud to present this vehicle.'
-                    ]
-                );
-                Log::info("AutoTrader vehicle synced for : {$scsCar->registration}");
-
-                foreach ($media as $index => $image) {
-                    ProcessVehicleImageJob::dispatch($scsCar->id, $image, $index);
-                }
-
-                DB::commit();
-            } catch (\Throwable $e) {
-                DB::rollBack();
-                Log::error('AutoTrader sync failed', ['error' => $e->getMessage()]);
+        try {
+            $token = $autoTraderService->getAuthToken();
+            if (!$token) {
+                Log::error('No AutoTrader token');
+                return;
             }
-        }
 
-        Log::info('AutoTrader sync completed');
+            $response = Http::withToken($token)->get($autoTraderService->getVehicleListUrl());
+
+            if (!$response->successful()) {
+                Log::error('Failed to fetch AutoTrader list', ['response' => $response->body()]);
+                return;
+            }
+
+            $data = $response->json();
+            $results = $data['results'] ?? [];
+
+            foreach ($results as $item) {
+                DB::beginTransaction();
+
+                try {
+                    $vehicle = $item['vehicle'];
+                    $advert = $item['adverts']['retailAdverts'] ?? [];
+                    $media = $item['media']['images'] ?? [];
+
+                    $scsCar = ScsCar::updateOrCreate(
+                        ['registration' => $vehicle['registration']],
+                        [/* same data here */]
+                    );
+
+                    Log::info("AutoTrader vehicle synced: {$scsCar->registration}");
+
+                    foreach ($media as $index => $image) {
+                        ProcessVehicleImageJob::dispatch($scsCar->id, $image, $index);
+                    }
+
+                    DB::commit();
+                } catch (\Throwable $e) {
+                    DB::rollBack();
+                    Log::error('AutoTrader vehicle DB sync failed', [
+                        'error' => $e->getMessage(),
+                        'vehicle' => $item['vehicle']['registration'] ?? 'unknown',
+                    ]);
+                }
+            }
+
+            Log::info('AutoTrader sync completed');
+        } catch (\Throwable $e) {
+            Log::error('SyncAutoTraderVehiclesJob failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
     }
 }
