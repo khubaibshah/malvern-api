@@ -92,7 +92,6 @@ class AutoTraderService
                         'price' => $advert['totalPrice']['amountGBP'] ?? 0,
                         'featured' => 0,
                         'plus_vat' => 0,
-                        'vat_qualifying' => 0,
                         'mileage' => $vehicle['odometerReadingMiles'],
                         'fuel_type' => $vehicle['fuelType'],
                         'colour' => $vehicle['colour'],
