@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncAutoTraderVehiclesJob;
 use App\Services\AutoTraderService;
 use Illuminate\Http\Request;
 
@@ -16,18 +17,17 @@ class AutoTraderVehicleList extends Controller
 
     public function autotraderVehicleList()
     {
-        $data = $this->autoTraderService->getVehicleList();
+        SyncAutoTraderVehiclesJob::dispatch();
 
         return response()->json([
-            'message' => 'AutoTrader vehicle list fetched.',
-            'data' => $data,
+            'message' => 'AutoTrader vehicle sync job has been dispatched.',
         ]);
     }
-    
+
     public function autotraderVehicle(Request $request)
     {
         $vehicleId = $request->route('vehicleId');
-        $data = $this->autoTraderService->getVehicle(vehicleId : $vehicleId);
+        $data = $this->autoTraderService->getVehicle(vehicleId: $vehicleId);
 
         return response()->json([
             'message' => 'AutoTrader vehicle fetched.',

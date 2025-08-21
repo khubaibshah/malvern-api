@@ -155,6 +155,28 @@ class AutoTraderService
         ];
     }
 
+    public function getSyncedCars()
+    {
+        $cars = ScsCar::with(['images' => fn($q) => $q->ordered()])
+            ->latest()
+            ->get()
+            ->map(fn($car) => [
+                'id' => $car->id,
+                'make' => strtoupper($car->make),
+                'model' => strtoupper($car->model),
+                'year' => $car->year,
+                'images' => $car->images->pluck('car_image')->toArray(),
+                // ... other fields
+            ])
+            ->toArray();
+
+        return response()->json([
+            'message' => 'Fetched synced vehicles.',
+            'data' => $cars,
+        ]);
+    }
+
+
 
     public function getVehicle($vehicleId): array
     {
