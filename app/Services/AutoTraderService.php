@@ -87,30 +87,45 @@ class AutoTraderService
                 $advert = $item['adverts']['retailAdverts'] ?? [];
                 $media = $item['media']['images'] ?? [];
 
-                $scsCar = ScsCar::updateOrCreate(
-                    ['registration' => $vehicle['registration']],
-                    [
-                        'make' => strtoupper($vehicle['make']),
-                        'model' => strtoupper($vehicle['model']),
-                        'year' => $vehicle['yearOfManufacture'],
-                        'registration_date' => $vehicle['firstRegistrationDate'],
-                        'variant' => $vehicle['derivative'],
-                        'price' => $advert['totalPrice']['amountGBP'] ?? 0,
-                        'featured' => 0,
-                        'plus_vat' => 0,
-                        'mileage' => $vehicle['odometerReadingMiles'],
-                        'fuel_type' => $vehicle['fuelType'],
-                        'colour' => $vehicle['colour'],
-                        'body_style' => $vehicle['bodyType'],
-                        'doors' => $vehicle['doors'],
-                        'gearbox' => $vehicle['transmissionType'],
-                        'keys' => null,
-                        'engine_size' => $vehicle['engineCapacityCC'],
-                        'veh_type' => $vehicle['vehicleType'],
-                        'vehicle_status' => $item['metadata']['lifecycleState'] ?? null,
-                        'description' => $advert['description2'] ?? $advert['description'] ?? 'SCS Car Sales Limited is proud to present this vehicle.'
-                    ]
-                );
+                $scsCar = ScsCar::where('registration', $vehicle['registration'])->first();
+
+                $data = [
+                    'make' => strtoupper($vehicle['make']),
+                    'model' => strtoupper($vehicle['model']),
+                    'year' => $vehicle['yearOfManufacture'],
+                    'registration_date' => $vehicle['firstRegistrationDate'],
+                    'variant' => $vehicle['derivative'],
+                    'price' => $advert['totalPrice']['amountGBP'] ?? 0,
+                    'featured' => 0,
+                    'plus_vat' => 0,
+                    'mileage' => $vehicle['odometerReadingMiles'],
+                    'fuel_type' => $vehicle['fuelType'],
+                    'colour' => $vehicle['colour'],
+                    'body_style' => $vehicle['bodyType'],
+                    'doors' => $vehicle['doors'],
+                    'gearbox' => $vehicle['transmissionType'],
+                    'keys' => null,
+                    'engine_size' => $vehicle['engineCapacityCC'],
+                    'veh_type' => $vehicle['vehicleType'],
+                    'vehicle_status' => $item['metadata']['lifecycleState'] ?? null,
+                    'description' => $advert['description2'] ?? $advert['description'] ?? 'SCS Car Sales Limited is proud to present this vehicle.',
+                ];
+
+                if ($scsCar) {
+                    $changes = [];
+                    foreach ($data as $key => $value) {
+                        if ($scsCar->$key != $value) {
+                            $changes[$key] = $value;
+                        }
+                    }
+
+                    if (!empty($changes)) {
+                        $scsCar->update($changes);
+                    }
+                } else {
+                    $scsCar = ScsCar::create(array_merge(['registration' => $vehicle['registration']], $data));
+                }
+
 
                 foreach ($media as $index => $image) {
                     $imgUrl = str_replace('{resize}', 'w1024h768', $image['href']);

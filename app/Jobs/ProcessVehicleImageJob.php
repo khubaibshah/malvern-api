@@ -14,6 +14,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+
+use Throwable;
 class ProcessVehicleImageJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -82,5 +84,6 @@ class ProcessVehicleImageJob implements ShouldQueue
                 'trace' => $e->getTraceAsString()
             ]);
         }
+        throw $e;
     }
 }
