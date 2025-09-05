@@ -31,6 +31,7 @@ class AutoTraderService
     {
         return $this->vehicleListUrl;
     }
+
     public function getAuthToken(): ?string
     {
         $cachedToken = Cache::get('autotrader_access_token');
@@ -199,5 +200,40 @@ class AutoTraderService
         }
 
         return ['error' => 'Unable to retrieve vehicle.'];
+    }
+
+    public function getValuation(string $registration, int $mileage)
+    {
+        $token = $this->getAuthToken();
+
+        $response = Http::withToken($token)->get('https://api-sandbox.autotrader.co.uk/vehicles', [
+            'registration' => $registration,
+            'valuations' => 'true',
+            'odometerReadingMiles' => $mileage,
+            'advertiserId' => config('services.autotrader.advertiser_id'),
+        ]);
+
+        if (!$response->successful()) {
+            throw new \Exception('Failed to fetch vehicle data from Autotrader: ' . $response->body());
+        }
+
+        $data = $response->json();
+        $vehicle = $data['vehicle'] ?? [];
+        $valuations = $data['valuations'] ?? [];
+
+        return [
+            'registration' => $vehicle['registration'] ?? null,
+            'make'        => $vehicle['make'] ?? null,
+            'model'       => $vehicle['model'] ?? null,
+            'generation'  => $vehicle['generation'] ?? null,
+            'bodyType'    => $vehicle['bodyType'] ?? null,
+            'fuelType'    => $vehicle['fuelType'] ?? null,
+            'colour'      => $vehicle['colour'] ?? null,
+            'valuations'  => [
+                'retail'       => $valuations['retail']['amountGBP'] ?? null,
+                'partExchange' => $valuations['partExchange']['amountGBP'] ?? null,
+                'private'      => $valuations['private']['amountGBP'] ?? null,
+            ],
+        ];
     }
 }

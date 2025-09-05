@@ -20,5 +20,4 @@ Route::get('/dvsa-vehicle-details-scs/{registrationNumber}', [DVSAVehicleControl
 #autotrader endpoints
 Route::get('/at/vehicleList', [AutoTraderVehicleList::class, 'autotraderVehicleList']);
 Route::get('/at/{vehicleId}', [AutoTraderVehicleList::class, 'autotraderVehicle']);
-
-
+Route::get('/at/{registration}/{milage}', [AutoTraderVehicleList::class, 'autotraderValuation']);

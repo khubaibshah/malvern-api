@@ -35,4 +35,16 @@ class AutoTraderVehicleList extends Controller
             'data' => $data,
         ]);
     }
+
+    public function autotraderValuation(Request $request)
+    {
+        $registration = $request->route('registration');
+        $milage = $request->route('milage');
+        $data = $this->autoTraderService->getValuation($registration, $milage);
+
+        return response()->json([
+            'message' => 'AutoTrader valuation fetched.',
+            'data' => $data,
+        ]);
+    }
 }

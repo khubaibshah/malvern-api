@@ -43,6 +43,7 @@ return [
     'autotrader' => [
         'key' => env('AUTOTRADER_KEY'),
         'secret' => env('AUTOTRADER_SECRET'),
+        'advertiser_id' => env('AUTOTRADER_ADVERTISER_ID'),
     ],
 
 //     'mail' => [
