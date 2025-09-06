@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AutoTraderService
 {
@@ -202,38 +203,59 @@ class AutoTraderService
         return ['error' => 'Unable to retrieve vehicle.'];
     }
 
+
+
     public function getValuation(string $registration, int $mileage)
     {
         $token = $this->getAuthToken();
 
-        $response = Http::withToken($token)->get('https://api-sandbox.autotrader.co.uk/vehicles', [
+        Log::info('Autotrader valuation request started', [
             'registration' => $registration,
-            'valuations' => 'true',
+            'mileage'      => $mileage,
+        ]);
+
+        $response = Http::withToken($token)->get('https://api-sandbox.autotrader.co.uk/vehicles', [
+            'registration'         => $registration,
+            'valuations'           => 'true',
             'odometerReadingMiles' => $mileage,
-            'advertiserId' => config('services.autotrader.advertiser_id'),
+            'advertiserId'         => config('services.autotrader.advertiser_id'),
         ]);
 
         if (!$response->successful()) {
-            throw new \Exception('Failed to fetch vehicle data from Autotrader: ' . $response->body());
+            Log::error('Autotrader valuation request failed', [
+                'registration' => $registration,
+                'mileage'      => $mileage,
+                'status'       => $response->status(),
+                'body'         => $response->body(),
+            ]);
+
+            throw new \Exception('Failed to fetch vehicle data from Autotrader');
         }
 
-        $data = $response->json();
-        $vehicle = $data['vehicle'] ?? [];
+        $data       = $response->json();
+        $vehicle    = $data['vehicle']    ?? [];
         $valuations = $data['valuations'] ?? [];
 
-        return [
+        $result = [
             'registration' => $vehicle['registration'] ?? null,
-            'make'        => $vehicle['make'] ?? null,
-            'model'       => $vehicle['model'] ?? null,
-            'generation'  => $vehicle['generation'] ?? null,
-            'bodyType'    => $vehicle['bodyType'] ?? null,
-            'fuelType'    => $vehicle['fuelType'] ?? null,
-            'colour'      => $vehicle['colour'] ?? null,
-            'valuations'  => [
-                'retail'       => $valuations['retail']['amountGBP'] ?? null,
+            'make'         => $vehicle['make'] ?? null,
+            'model'        => $vehicle['model'] ?? null,
+            'generation'   => $vehicle['generation'] ?? null,
+            'bodyType'     => $vehicle['bodyType'] ?? null,
+            'fuelType'     => $vehicle['fuelType'] ?? null,
+            'colour'       => $vehicle['colour'] ?? null,
+            'valuations'   => [
+                'retail'       => $valuations['retail']['amountGBP']       ?? null,
                 'partExchange' => $valuations['partExchange']['amountGBP'] ?? null,
-                'private'      => $valuations['private']['amountGBP'] ?? null,
+                'private'      => $valuations['private']['amountGBP']      ?? null,
             ],
         ];
+
+        Log::info('Autotrader valuation request successful', [
+            'registration' => $registration,
+            'result'       => $result,
+        ]);
+
+        return $result;
     }
 }
