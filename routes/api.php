@@ -1,15 +1,12 @@
 <?php
 
+use App\Http\Controllers\AutoTraderWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminBookingController;
-use App\Http\Controllers\CustomerBookingController;
 use App\Http\Controllers\DVSAVehicleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\VehicleDetailsController;
-use App\Http\Controllers\ScsCarImageController;
 use App\Http\Controllers\ScsVehicleController;
 /*
 |--------------------------------------------------------------------------
@@ -49,3 +46,6 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('/users', [UserController::class, 'index']);
 });
 
+// routes/api.php
+
+Route::post('/webhooks/autotrader', [AutoTraderWebhookController::class, 'handle']);
