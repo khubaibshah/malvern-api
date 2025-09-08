@@ -189,28 +189,97 @@ class ScsVehicleService
 
 
     public function getAll(): array
-    {
-        try {
-            $vehicles = ScsCar::withTrashed()->get();
+{
+    try {
+        $vehicles = ScsCar::withTrashed()
+            ->with(['images' => fn ($q) => $q->ordered()]) // is_main DESC, sort_order ASC, id ASC
+            ->get();
 
-            $carsWithImages = $vehicles->map(function ($car) {
-                $folder = "car_images/{$car->registration}";
-                $imagePaths = $this->awsS3->listFiles($folder);
-                $imageUrls = array_map(fn($path) => $this->awsS3->getFileUrl($path), $imagePaths);
+        $cars = $vehicles->map(function ($car) {
+            $folder  = "car_images/{$car->registration}";
+            $s3Keys  = $this->awsS3->listFiles($folder);      // e.g. ["car_images/REG/001.jpg", ...]
+            $s3Index = array_flip($s3Keys);                   // quick lookup
 
-                $car->images = $imageUrls;
-                return $car;
-            });
+            $urls = [];
 
-            return ['cars' => $carsWithImages, 'status' => 200];
-        } catch (\Exception $e) {
-            Log::error('Failed to fetch all vehicles', ['error' => $e->getMessage()]);
-            return [
-                'error' => 'Server error while fetching vehicles.',
-                'status' => 500
-            ];
-        }
+            if ($car->images && $car->images->count()) {
+                // Prefer DB order, but swap to S3 URL when the same file exists there
+                foreach ($car->images as $img) {
+                    $decoded = base64_decode($img->car_image) ?: '';
+
+                    // Try to map DB URL → S3 key
+                    $path     = ltrim(parse_url($decoded, PHP_URL_PATH) ?? '', '/'); // "car_images/REG/001.jpg"
+                    $basename = $path ? basename($path) : null;
+                    $guessKey = $basename ? "{$folder}/{$basename}" : null;
+
+                    if ($guessKey && isset($s3Index[$guessKey])) {
+                        $urls[] = $this->awsS3->getFileUrl($guessKey);
+                    } elseif ($path && isset($s3Index[$path])) {
+                        $urls[] = $this->awsS3->getFileUrl($path);
+                    } elseif ($decoded !== '') {
+                        $urls[] = $decoded; // fall back to DB URL
+                    }
+                }
+            } else {
+                // No DB images — fall back to all S3 files in folder
+                if (!empty($s3Keys)) {
+                    // Natural sort by filename so 1,2,10 is correct order
+                    usort($s3Keys, fn($a, $b) => strnatcmp(basename($a), basename($b)));
+                    $urls = array_map(fn($k) => $this->awsS3->getFileUrl($k), $s3Keys);
+                }
+            }
+
+            // Deduplicate while preserving order
+            $urls = array_values(array_unique($urls));
+
+            // Choose main image
+            $main = null;
+            if ($car->relationLoaded('images') && $car->images->count()) {
+                $mainRow = $car->images->firstWhere('is_main', true) ?? $car->images->first();
+                $decodedMain = $mainRow ? base64_decode($mainRow->car_image) : null;
+                if ($decodedMain) {
+                    $mainPath = ltrim(parse_url($decodedMain, PHP_URL_PATH) ?? '', '/');
+                    if ($mainPath && in_array($mainPath, $s3Keys, true)) {
+                        $main = $this->awsS3->getFileUrl($mainPath);
+                    } else {
+                        $base  = $mainPath ? basename($mainPath) : null;
+                        $guess = $base ? "{$folder}/{$base}" : null;
+                        $main  = ($guess && in_array($guess, $s3Keys, true))
+                            ? $this->awsS3->getFileUrl($guess)
+                            : $decodedMain;
+                    }
+                }
+            }
+
+            // If still no main, try decoded car.main_image, else first url
+            if (!$main) {
+                $candidate = $car->main_image;
+                if ($candidate) {
+                    $main = preg_match('~^https?://~i', $candidate) ? $candidate : base64_decode($candidate);
+                }
+            }
+            if (!$main && !empty($urls)) {
+                $main = $urls[0];
+            }
+
+            // Return plain URLs; hide the relation rows
+            $car->setRelation('images', collect());
+            $car->images     = $urls;
+            $car->main_image = $main;
+
+            return $car;
+        });
+
+        return ['cars' => $cars, 'status' => 200];
+    } catch (\Throwable $e) {
+        \Log::error('Failed to fetch all vehicles', ['error' => $e->getMessage()]);
+        return [
+            'error'  => 'Server error while fetching vehicles.',
+            'status' => 500,
+        ];
     }
+}
+
 
     public function getAllVehicles(): array
     {
