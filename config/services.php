@@ -44,6 +44,7 @@ return [
         'key' => env('AUTOTRADER_KEY'),
         'secret' => env('AUTOTRADER_SECRET'),
         'advertiser_id' => env('AUTOTRADER_ADVERTISER_ID'),
+        'inline_image_processing' => env('AUTOTRADER_INLINE_IMAGE_PROCESSING', false),
     ],
 
 //     'mail' => [

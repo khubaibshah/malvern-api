@@ -20,12 +20,15 @@ class AutoTraderService
     protected string $key;
     protected string $secret;
     protected AwsS3Service $awsS3;
+    protected bool $shouldProcessImagesInline;
 
     public function __construct(AwsS3Service $awsS3)
     {
         $this->key = config('services.autotrader.key');
         $this->secret = config('services.autotrader.secret');
         $this->awsS3 = $awsS3;
+        $this->shouldProcessImagesInline = (bool) config('services.autotrader.inline_image_processing', false)
+            || config('queue.default') === 'sync';
     }
 
     public function getVehicleListUrl(): string
@@ -138,7 +141,11 @@ class AutoTraderService
                         continue; //Skip dispatch if already exists in S3
                     }
 
-                    ProcessVehicleImageJob::dispatch($scsCar->id, $image, $index);
+                    if ($this->shouldProcessImagesInline) {
+                        ProcessVehicleImageJob::dispatchSync($scsCar->id, $image, $index);
+                    } else {
+                        ProcessVehicleImageJob::dispatch($scsCar->id, $image, $index);
+                    }
                 }
 
                 DB::commit();
